@@ -1,8 +1,11 @@
 package com.kenzie.capstone.service;
 
 import com.kenzie.capstone.service.dao.ExampleDao;
+import com.kenzie.capstone.service.dao.UserAccountsDao;
 import com.kenzie.capstone.service.model.ExampleData;
 import com.kenzie.capstone.service.model.ExampleRecord;
+import com.kenzie.capstone.service.model.UserAccounts;
+import com.kenzie.capstone.service.model.UserAccountsResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -25,14 +28,18 @@ class LambdaServiceTest {
      *  ------------------------------------------------------------------------ **/
 
     private ExampleDao exampleDao;
+
+    private UserAccountsDao userAccountsDao;
+
     private LambdaService lambdaService;
 
     @BeforeAll
     void setup() {
         this.exampleDao = mock(ExampleDao.class);
-        this.lambdaService = new LambdaService(exampleDao);
+        this.userAccountsDao = mock(UserAccountsDao.class);
+        this.lambdaService = new LambdaService(userAccountsDao);
     }
-
+ /*
     @Test
     void setDataTest() {
         ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
@@ -82,6 +89,39 @@ class LambdaServiceTest {
         assertEquals(data, response.getData(), "The response data should match");
     }
 
+  */
+
     // Write additional tests here
+
+    @Test
+    void setUserAccountsTest() {
+        ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> accountTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+
+        // GIVEN
+        String name = "name";
+        String accountType = "accountType";
+        String password = "password";
+
+        // WHEN
+        UserAccounts response = this.lambdaService.setUserAccounts(name,accountType,password);
+
+        // THEN
+        verify(userAccountsDao, times(1)).setUserAccounts(idCaptor.capture(), nameCaptor.capture(), accountTypeCaptor.capture(), passwordCaptor.capture());
+
+        assertNotNull(idCaptor.getValue(), "An ID is generated");
+        assertEquals(name, nameCaptor.getValue(), "The name is saved");
+        assertEquals(accountType, accountTypeCaptor.getValue(), "The accountType is saved");
+        assertEquals(password, passwordCaptor.getValue(), "The password is saved");
+
+        assertNotNull(response, "A response is returned");
+        assertEquals(idCaptor.getValue(), response.getId(), "The response id should match");
+        assertEquals(name, response.getName(), "The response name should match");
+        assertEquals(accountType, response.getAccountType(), "The response accounttype should match");
+        assertEquals(password, response.getPassword(), "The response password should match");
+
+    }
 
 }

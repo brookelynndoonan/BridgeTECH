@@ -16,12 +16,14 @@ import javax.inject.Singleton;
 )
 public class ServiceModule {
 
-    @Singleton
+  /*  @Singleton
     @Provides
     @Inject
     public LambdaService provideLambdaService(@Named("ExampleDao") ExampleDao exampleDao) {
         return new LambdaService(exampleDao);
     }
+
+   */
 
     @Singleton
     @Provides
