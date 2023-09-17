@@ -15,10 +15,14 @@ public class LambdaService {
     private ExampleDao exampleDao;
     private UserAccountsDao userAccountsDao;
 
-    @Inject
+   /* @Inject
     public LambdaService(ExampleDao exampleDao) {
         this.exampleDao = exampleDao;
     }
+
+
+    */
+
 
     @Inject
     public LambdaService(UserAccountsDao userAccountsDao) { this.userAccountsDao = userAccountsDao;}
