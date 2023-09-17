@@ -2,10 +2,7 @@ package com.kenzie.capstone.service;
 
 import com.kenzie.capstone.service.dao.ExampleDao;
 import com.kenzie.capstone.service.dao.UserAccountsDao;
-import com.kenzie.capstone.service.model.ExampleData;
-import com.kenzie.capstone.service.model.ExampleRecord;
-import com.kenzie.capstone.service.model.UserAccounts;
-import com.kenzie.capstone.service.model.UserAccountsResponse;
+import com.kenzie.capstone.service.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -122,6 +119,40 @@ class LambdaServiceTest {
         assertEquals(accountType, response.getAccountType(), "The response accounttype should match");
         assertEquals(password, response.getPassword(), "The response password should match");
 
+    }
+
+    @Test
+    void getUserAccountTest() {
+        ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
+
+        // GIVEN
+        String id = "fakeid";
+        String name = "name";
+        String accountType = "accountType";
+        String password = "password";
+
+        UserAccountRecord record = new UserAccountRecord();
+        record.setId(id);
+        record.setName(name);
+        record.setAccountType(accountType);
+        record.setPassword(password);
+
+
+        when(userAccountsDao.getUserAccounts(id)).thenReturn(Arrays.asList(record));
+
+        // WHEN
+        UserAccounts response = this.lambdaService.getUserAccounts(id);
+
+        // THEN
+        verify(userAccountsDao, times(1)).getUserAccounts(idCaptor.capture());
+
+        assertEquals(id, idCaptor.getValue(), "The correct id is used");
+
+        assertNotNull(response, "A response is returned");
+        assertEquals(id, response.getId(), "The response id should match");
+        assertEquals(name, response.getName(), "The response name should match");
+        assertEquals(accountType, response.getAccountType(), "The response accountType should match");
+        assertEquals(password, response.getPassword(), "The response password should match");
     }
 
 }
