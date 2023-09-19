@@ -1,0 +1,21 @@
+.field input{
+    color: white;
+    border: none;
+    border-bottom: 1px solid #3f3f3f;
+    background: none;
+    padding: 5px 0;
+    margin-top: 32px;
+    width: 100%;
+}
+
+.field input:focus+label,
+.field input:valid+label {
+    bottom: 25px;
+    font-size: 13px;
+}
+
+#action {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0 30px;
+}
