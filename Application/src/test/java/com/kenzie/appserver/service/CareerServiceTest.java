@@ -177,7 +177,7 @@ public class CareerServiceTest {
         // WHEN
         Assertions.assertThrows(ResponseStatusException.class, () -> careerService.updateCareer(careerId,
                 "newName", "newLocation", "newJobDescription",
-                "newCompanyDescription" ));
+                "newCompanyDescription"));
 
         // THEN
         try {
