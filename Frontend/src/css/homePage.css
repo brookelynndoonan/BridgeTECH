@@ -6,14 +6,16 @@
 /* Styling the header */
 .header_home {
     float: left;
-    margin-right: 20px;
-    line-height: 13px;
+    max-width: min(100%, 850px);
+    margin-inline: auto;
+    /*margin-right: 20px;*/
+    /*line-height: 13px;*/
 }
 
 /* Styling the navigation */
 .title-container ul {
     list-style-type: none;
-    margin: 0;
+  /* margin: 0; */
     overflow: hidden;
     background-color: #333;
 }
