@@ -9,6 +9,7 @@ public class CareerCreateRequest {
     @NotEmpty
     @JsonProperty("name")
     private String name;
+    private String id;
     private String location;
     private String jobDescription;
     private String companyDescription;
@@ -16,7 +17,7 @@ public class CareerCreateRequest {
     public String getName() {
         return name;
     }
-
+    public String getId() { return id; }
     public String getLocation() {
         return location;
     }
