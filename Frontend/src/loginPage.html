@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Login-Sign-up</title>
-    <link rel="stylesheet" type="text/css" href="css/loginPage.css">
+    <link rel="stylesheet" href="css/loginPage.css">
 
 </head>
-<body data-theme="dark">
-<div id="main-container">
-  <span class="title-text">login</span>
-
-    <form id="login-form">
-        <div class="field">
-            <input required="" type="text">
-            <label>Email</label>
-        </div>
+<body class ="background">
+<div class="main-container">
+    <div class="form-container">
+        <div class="content">
+            <span class="title-text">Login</span>
+            <form class="login-form">
+                 <div class="field">
+                      <input required="" type="text">
+                      <label>Email</label>
+                 </div>
 
         <div class="field">
             <input required="" type="text">
             <label>Password</label>
         </div>
 
-        <div id="action">
+        <div class="action">
             <label><input type="checkbox">Remember Me</label>
-            <a id="forget" href=""> Forget Password?</a>
+            <a class="forget" href=""> Forget Password?</a>
         </div>
 
-        <button id="login">Login</button>
-        <div id="signup">Don't have an account?
+        <button class="login">Login</button>
+        <div class="signup">Don't have an account?
             <a href="">Sign up</a>
         </div>
-    </form>
+          </form>
+        </div>
+    </div>
 </div>
 
 </body>

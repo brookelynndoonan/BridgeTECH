@@ -11,14 +11,16 @@ class HomePage extends BaseClass {
     }
     async mount() {
         document.getElementById('get-title-content').addEventListener('submit', this.onGet);
-        document.getElementById('create-form').addEventListener('submit', this.onCreate);
-        this.client = new ExampleClient();
+      //  document.getElementById('create-form').addEventListener('submit', this.onCreate);
+        this.client = new bridgeTechClient();
 
         this.dataStore.addChangeListener(this.renderExample)
     }
 
 
     // get login information // //or get images??
+    //QUESTIONS TO ASK ELISE - the on get is similar to the
+
     async onGet(event) {
         // Prevent the page from refreshing on form submit
         event.preventDefault();
