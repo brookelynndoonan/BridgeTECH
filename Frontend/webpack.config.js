@@ -9,6 +9,7 @@ module.exports = {
   },
   entry: {
     examplePage: path.resolve(__dirname, 'src', 'pages', 'examplePage.js'),
+    homePage: path.resolve(__dirname, 'src', 'pages', 'homePage.js'),
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -32,6 +33,10 @@ module.exports = {
       template: './src/index.html',
       filename: 'index.html',
       inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/homePage.html',
+      filename: 'homePage.html',
     }),
     new CopyPlugin({
       patterns: [
