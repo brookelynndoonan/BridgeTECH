@@ -4,7 +4,7 @@
 }
 
 body{
-    background-image: url();
+    background-image: url(https://www.pexels.com/photo/photo-of-milky-way-574115/);
     background-repeat: no-repeat;
 
 }
@@ -50,7 +50,7 @@ body{
 
 /* Styling the background */
 .background {
-    background-color: #656270;
+    background-color: #3a3842;
 }
 /*body {*/
 /*    background-color: #DBF9FC;*/
