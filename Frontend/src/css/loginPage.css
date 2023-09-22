@@ -1,5 +1,6 @@
 .background {
     background-color: #656270;
+    background-image: image('pexels-shay-wood-574115-png');
 }
 .main-container{
     display: flex;
