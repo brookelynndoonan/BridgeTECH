@@ -8,7 +8,7 @@ import com.kenzie.appserver.repositories.CareerRepository;
 import com.kenzie.appserver.service.model.Career;
 
 // import com.kenzie.capstone.service.client.LambdaServiceClient; Once lambdas are made we'll update this import
- // import com.kenzie.capstone.service.model.ExampleData; ^^
+// import com.kenzie.capstone.service.model.ExampleData; ^^
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,20 +25,20 @@ public class CareerService {
 
     private CareerRepository careerRepository;
 
-    public CareerService(CareerRepository careerRepository){
+    public CareerService(CareerRepository careerRepository) {
         this.careerRepository = careerRepository;
     }
 
-    public List<CareerResponse>  findAllCareers (){
+    public List<CareerResponse> findAllCareers() {
 
-        List<CareerRecord> recordList = StreamSupport.stream(careerRepository.findAll().spliterator(),true).collect(Collectors.toList());
+        List<CareerRecord> recordList = StreamSupport.stream(careerRepository.findAll().spliterator(), true).collect(Collectors.toList());
 
-         return recordList.stream()
-                 .map(record-> createCareerResponseFromRecord(record))
-                 .collect(Collectors.toList());
+        return recordList.stream()
+                .map(record -> createCareerResponseFromRecord(record))
+                .collect(Collectors.toList());
     }
 
-    public CareerResponse findCareerById(String id){
+    public CareerResponse findCareerById(String id) {
 
         CareerResponse careerInfo = careerRepository
                 .findById(id)
@@ -48,7 +48,7 @@ public class CareerService {
         return careerInfo;
     }
 
-    public CareerResponse addNewCareer(CareerCreateRequest careerCreateRequest){
+    public CareerResponse addNewCareer(CareerCreateRequest careerCreateRequest) {
 
         CareerRecord careerRecord = createCareerRecordFromRequest(careerCreateRequest);
 
@@ -59,11 +59,11 @@ public class CareerService {
 
     }
 
-    public CareerResponse updateCareer(String id, String name,String location, String jobDescription, String companyDescription){
+    public CareerResponse updateCareer(String id, String name, String location, String jobDescription, String companyDescription) {
 
         Optional<CareerRecord> careerExist = careerRepository.findById(id);
 
-        if(careerExist.isEmpty()){
+        if (careerExist.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Career Not Found");
         }
 
@@ -81,10 +81,12 @@ public class CareerService {
     }
 
 
-    public void deleteCareer(String id){ careerRepository.deleteById(id);}
+    public void deleteCareer(String id) {
+        careerRepository.deleteById(id);
+    }
 
     // PRIVATE HELPER METHODS
-    private CareerRecord createCareerRecordFromRequest(CareerCreateRequest request){
+    private CareerRecord createCareerRecordFromRequest(CareerCreateRequest request) {
 
         CareerRecord record = new CareerRecord();
 
@@ -97,7 +99,7 @@ public class CareerService {
         return record;
     }
 
-    private CareerResponse createCareerResponseFromRecord(CareerRecord careerRecord){
+    private CareerResponse createCareerResponseFromRecord(CareerRecord careerRecord) {
 
         CareerResponse response = new CareerResponse();
 
@@ -109,7 +111,6 @@ public class CareerService {
 
         return response;
     }
-
 
 
 }
