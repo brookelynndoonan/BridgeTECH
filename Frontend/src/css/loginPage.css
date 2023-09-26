@@ -1,6 +1,6 @@
 .background {
-    background-color: #656270;
-    background-image: image('pexels-shay-wood-574115-png');
+   background-color: #3a3842;
+    background-image: url(https://images.pexels.com/photos/574115/pexels-photo-574115.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
 }
 .main-container{
     display: flex;
