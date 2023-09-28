@@ -31,7 +31,8 @@ public class CareerService {
 
     public List<CareerResponse> findAllCareers() {
 
-        List<CareerRecord> recordList = StreamSupport.stream(careerRepository.findAll().spliterator(), true).collect(Collectors.toList());
+        List<CareerRecord> recordList = StreamSupport.stream(careerRepository.findAll().spliterator(),
+                true).collect(Collectors.toList());
 
         return recordList.stream()
                 .map(record -> createCareerResponseFromRecord(record))
