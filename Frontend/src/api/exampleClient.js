@@ -61,6 +61,21 @@ export default class ExampleClient extends BaseClass {
      * @param error The error received from the server.
      * @param errorCallback (Optional) A function to execute if the call fails.
      */
+    // Career controller --------------------------------------------------------------------------------------------------
+
+    async getCareer(Id, errorCallback){
+        try {
+            const response = await this.client.get(`/Career/ ${Id}`);
+            return response.data;
+        } catch (error){
+            this.handleError("getCareer" , error, errorCallback);
+        }
+    }
+
+
+
+
+
     handleError(method, error, errorCallback) {
         console.error(method + " failed - " + error);
         if (error.response.data.message !== undefined) {
