@@ -9,10 +9,15 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-image: url(https://images.pexels.com/photos/574115/pexels-photo-574115.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
+    background-image: url(https://images.pexels.com/photos/5984612/pexels-photo-5984612.jpeg?auto=compress&cs=tinysrgb&w=800);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
+}
+
+/* Styling the background */
+.background {
+    background-color: #3a3842;
 }
 
 /* Styling the header */
@@ -60,6 +65,7 @@ body{
 }
 
 .root{
+    margin-top: 50px;
     position: relative;
     width: 200px;
     height: 300px;
@@ -95,9 +101,4 @@ root span{
     height: 100%;
     object-fit: cover;
 
-}
-
-/* Styling the background */
-.background {
-    background-color: #3a3842;
 }
