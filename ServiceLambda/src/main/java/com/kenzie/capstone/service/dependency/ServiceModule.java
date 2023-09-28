@@ -25,6 +25,7 @@ public class ServiceModule {
 
    */
 
+// (UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage. Still need to test. still need to implemnt within our application service after testing is finish.)
 
     @Singleton
     @Provides

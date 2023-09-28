@@ -20,8 +20,8 @@ public class LambdaService {
         this.exampleDao = exampleDao;
     }
 
-
     */
+//(UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage. Still need to test. still need to implemnt within our application service after testing is finish.)
 
 
     @Inject
