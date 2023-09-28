@@ -23,11 +23,10 @@ public class ServiceModule {
         return new LambdaService(exampleDao);
     }
 
-<<<<<<< HEAD
    */
 
-=======
->>>>>>> 8f0e4b4 (UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage. Still need to test. still need to implemnt within our application service after testing is finish.)
+// (UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage. Still need to test. still need to implemnt within our application service after testing is finish.)
+
     @Singleton
     @Provides
     @Inject
