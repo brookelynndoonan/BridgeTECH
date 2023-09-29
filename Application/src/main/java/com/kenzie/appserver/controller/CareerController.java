@@ -31,12 +31,6 @@ public class CareerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Career Name");
         }
 
-        //Look into UserId being accessed by Career Class // This was an example chunk.
-        /*// If the referrerId is an empty string, then treat is as not present.
-        if (createCustomerRequest.getReferrerId().isPresent() && createCustomerRequest.getReferrerId().get().length() == 0) {
-            createCustomerRequest.setReferrerId(Optional.empty());
-        }*/
-
         CareerResponse response = careerService.addNewCareer(careerCreateRequest);
 
         return ResponseEntity.created(URI.create("/careers/" + response.getId())).body(response);

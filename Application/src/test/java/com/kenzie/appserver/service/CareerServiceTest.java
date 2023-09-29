@@ -66,7 +66,7 @@ public class CareerServiceTest {
         CareerResponse career = careerService.findCareerById(id);
 
         // THEN
-        Assertions.assertNull(career, "The example is null when not found");
+        Assertions.assertNull(career, "The career is null when not found");
     }
 
     @Test
