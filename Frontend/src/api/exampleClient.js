@@ -58,6 +58,15 @@ export default class ExampleClient extends BaseClass {
 
     // Career controller --------------------------------------------------------------------------------------------------
 
+    async getAllCareers(errorCallback){
+        try {
+            const response = await this.client.get(`Career`);
+
+    } catch (error){
+        this.handleError("getAllCareers",error, errorCallback)
+        }
+    }
+
     async getCareer(Id, errorCallback){
         try {
             const response = await this.client.get(`/Career/ ${Id}`);
@@ -65,6 +74,20 @@ export default class ExampleClient extends BaseClass {
         } catch (error){
             this.handleError("getCareer" , error, errorCallback);
         }
+    }
+
+
+    async updateCareerById( Id, errorCallback){
+        try {
+        const response = await this.client.post(`/Career/ ${Id}`);
+        return response.data;
+        } catch (error){
+            this.handleError("updateCareerById", error, errorCallback);
+        }
+    }
+
+    async searchCareerById(Id, errorCallback){
+
     }
 
     async createCareer(name, errorCallback){
@@ -78,14 +101,10 @@ export default class ExampleClient extends BaseClass {
         }
     }
 
-    async updateCareerById( errorCallback){
-        try {
-        const response = await this.client.post(`/Career/` ${Id});
-        return response.data;
-        } catch (error){
-            this.handleError("updateCareerById", error, errorCallback);
-        }
+    async deleteCustomerById(Id, errorCallback){
+
     }
+
 
     /**
      * Helper method to log the error and run any error functions.
