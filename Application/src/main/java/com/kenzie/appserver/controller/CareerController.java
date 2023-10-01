@@ -72,4 +72,20 @@ public class CareerController {
         careerService.deleteCareer(careerId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable String userId) {
+        CareerResponse careerResponse = careerService.getUsers(userId);
+
+        if (careerResponse == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(careerResponse);
+    }
 }
+
+
+
+
+
