@@ -5,10 +5,10 @@
 }
 
 body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    /*min-height: 100vh;*/
     background-image: url(https://images.pexels.com/photos/5984612/pexels-photo-5984612.jpeg?auto=compress&cs=tinysrgb&w=800);
     background-size: cover;
     background-repeat: no-repeat;
@@ -65,8 +65,9 @@ body{
 }
 
 .root{
-    margin-top: 50px;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 200px;
     height: 300px;
     transform-style: preserve-3d;
@@ -82,7 +83,7 @@ body{
     }
 }
 
-root span{
+.root span{
     position: absolute;
     top: 0;
     left: 0;
@@ -92,6 +93,17 @@ root span{
     transform-style: preserve-3d;
     transform: rotateY(calc(var(--i)* 45deg)) translateZ(400px);
         /*-webkit-box-reflect: below 0px linear-gradient(transparent, transparent, #0004);*/
+}
+
+.root span ::before{
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 30%; /* Adjust to control the height of the reflection */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+    transform: scaleY(-1);
 }
 .root span img{
     position: absolute;

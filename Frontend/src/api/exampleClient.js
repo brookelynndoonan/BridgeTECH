@@ -13,7 +13,7 @@ export default class ExampleClient extends BaseClass {
 
     constructor(props = {}){
         super();
-        const methodsToBind = ['clientLoaded', 'getExample', 'createExample'];
+        const methodsToBind = ['clientLoaded', 'getExample', 'createExample', 'getAllCareers', 'getCareerById', 'updateCareerById', 'searchCareerById', 'createCareer', 'deleteCustomerById'];
         this.bindClassMethods(methodsToBind, this);
         this.props = props;
         this.clientLoaded(axios);
@@ -67,7 +67,7 @@ export default class ExampleClient extends BaseClass {
         }
     }
 
-    async getCareer(Id, errorCallback){
+    async getCareerById(Id, errorCallback){
         try {
             const response = await this.client.get(`/Career/ ${Id}`);
             return response.data;
@@ -102,8 +102,16 @@ export default class ExampleClient extends BaseClass {
     }
 
     async deleteCustomerById(Id, errorCallback){
+try {
 
+} catch (error){
+    this.handleError(dele)
+}
     }
+
+
+    // userAccount controller --------------------------------------------------------------------------------------------------
+
 
 
     /**
