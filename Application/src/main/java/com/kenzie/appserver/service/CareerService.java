@@ -9,6 +9,8 @@ import com.kenzie.appserver.service.model.Career;
 
 // import com.kenzie.capstone.service.client.LambdaServiceClient; Once lambdas are made we'll update this import
 // import com.kenzie.capstone.service.model.ExampleData; ^^
+import com.kenzie.capstone.service.client.LambdaServiceClient;
+import com.kenzie.capstone.service.model.UserAccounts;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import java.util.stream.StreamSupport;
 public class CareerService {
 
     private CareerRepository careerRepository;
+    private LambdaServiceClient lambdaServiceClient;
 
     public CareerService(CareerRepository careerRepository) {
         this.careerRepository = careerRepository;
@@ -84,6 +87,16 @@ public class CareerService {
 
     public void deleteCareer(String id) {
         careerRepository.deleteById(id);
+    }
+
+    public CareerResponse getUsers(String userId) {
+        UserAccounts users = lambdaServiceClient.getUserAccounts(userId);
+
+        CareerResponse careerResponse = new CareerResponse();
+        careerResponse.setUserId(users.getId());
+        careerResponse.setUserName(users.getName());
+
+        return careerResponse;
     }
 
     // PRIVATE HELPER METHODS

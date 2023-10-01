@@ -21,6 +21,20 @@ public class CareerResponse {
     @JsonProperty("companydescription")
     private String companyDescription;
 
+    @JsonProperty("userName")
+    private String userName;
+
+    @JsonProperty("userId")
+    private String userId;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
     public String getId() {
         return id;
     }
@@ -59,5 +73,12 @@ public class CareerResponse {
 
     public void setCompanyDescription(String companyDescription) {
         this.companyDescription = companyDescription;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
