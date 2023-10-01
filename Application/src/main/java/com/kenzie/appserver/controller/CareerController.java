@@ -16,7 +16,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/Career")
 public class CareerController {
-
     private CareerService careerService;
 
     CareerController(CareerService careerService) {
@@ -68,8 +67,9 @@ public class CareerController {
 
     //Look into more about how we are deleting things, based off User criteria.
     @DeleteMapping("/{Id}")
-    public ResponseEntity deleteCustomerById(@PathVariable("Id") String careerId) {
-        careerService.deleteCareer(careerId);
+    public ResponseEntity deleteCustomerById(@PathVariable("Id") String careerId,
+                                             @RequestParam("userId") String userId) {
+        careerService.deleteCareer(careerId, userId);
         return ResponseEntity.ok().build();
     }
 

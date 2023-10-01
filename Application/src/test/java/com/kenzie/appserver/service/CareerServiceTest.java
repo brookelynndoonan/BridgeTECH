@@ -9,11 +9,13 @@ import com.kenzie.appserver.repositories.model.ExampleRecord;
 import com.kenzie.appserver.service.model.Career;
 import com.kenzie.appserver.service.model.Example;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
+import com.kenzie.capstone.service.model.UserAccounts;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoAssertionError;
 import org.mockito.stubbing.Answer;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,17 +25,20 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class CareerServiceTest {
     private CareerRepository careerRepository;
     private CareerService careerService;
-    //private LambdaServiceClient lambdaServiceClient;
+    private LambdaServiceClient lambdaServiceClient;
 
     @BeforeEach
     void setup() {
         careerRepository = mock(CareerRepository.class);
-        careerService = new CareerService(careerRepository);
+        lambdaServiceClient = mock(LambdaServiceClient.class); // Initialize the lambdaServiceClient here
+        careerService = new CareerService(careerRepository, lambdaServiceClient);
     }
 
     @Test
@@ -51,8 +56,8 @@ public class CareerServiceTest {
 
         // THEN
         Assertions.assertNotNull(career, "The object is returned");
-        Assertions.assertEquals(record.getId(), career.getId(), "The id matches");
-        Assertions.assertEquals(record.getCareerName(), career.getName(), "The name matches");
+        assertEquals(record.getId(), career.getId(), "The id matches");
+        assertEquals(record.getCareerName(), career.getName(), "The name matches");
     }
 
     @Test
@@ -90,15 +95,15 @@ public class CareerServiceTest {
 
         // THEN
         Assertions.assertNotNull(customers, "The career list is returned");
-        Assertions.assertEquals(2, customers.size(), "There are two careers");
+        assertEquals(2, customers.size(), "There are two careers");
 
         for (CareerResponse customer : customers) {
             if (customer.getId().equals(record1.getId())) {
-                Assertions.assertEquals(record1.getId(), customer.getId(), "The career id matches");
-                Assertions.assertEquals(record1.getCareerName(), customer.getName(), "The career name matches");
+                assertEquals(record1.getId(), customer.getId(), "The career id matches");
+                assertEquals(record1.getCareerName(), customer.getName(), "The career name matches");
             } else if (customer.getId().equals(record2.getId())) {
-                Assertions.assertEquals(record2.getId(), customer.getId(), "The career id matches");
-                Assertions.assertEquals(record2.getCareerName(), customer.getName(), "The career name matches");
+                assertEquals(record2.getId(), customer.getId(), "The career id matches");
+                assertEquals(record2.getCareerName(), customer.getName(), "The career name matches");
             } else {
                 Assertions.fail("Career returned that was not in the records!");
             }
@@ -126,7 +131,7 @@ public class CareerServiceTest {
 
         Assertions.assertNotNull(record, "The career record is returned");
         Assertions.assertNotNull(record.getId(), "The career id exists");
-        Assertions.assertEquals(record.getCareerName(), careerName, "The career name matches");
+        assertEquals(record.getCareerName(), careerName, "The career name matches");
     }
 
     @Test
@@ -159,12 +164,12 @@ public class CareerServiceTest {
         CareerRecord record = careerRecordCaptor.getValue();
 
         Assertions.assertNotNull(record, "The career record is returned");
-        Assertions.assertEquals(record.getId(), customerId, "The career id matches");
-        Assertions.assertEquals(record.getCareerName(), newCareerName, "The career name matches");
-        Assertions.assertEquals(record.getLocation(), newLocation, "The career location matches");
-        Assertions.assertEquals(record.getCompanyDescription(), newCompanyDescription,
+        assertEquals(record.getId(), customerId, "The career id matches");
+        assertEquals(record.getCareerName(), newCareerName, "The career name matches");
+        assertEquals(record.getLocation(), newLocation, "The career location matches");
+        assertEquals(record.getCompanyDescription(), newCompanyDescription,
                 "The company description matches");
-        Assertions.assertEquals(record.getJobDescription(), newJobDescription, "The job description matches");
+        assertEquals(record.getJobDescription(), newJobDescription, "The job description matches");
     }
 
     @Test
@@ -175,7 +180,7 @@ public class CareerServiceTest {
         when(careerRepository.findById(careerId)).thenReturn(Optional.empty());
 
         // WHEN
-        Assertions.assertThrows(ResponseStatusException.class, () -> careerService.updateCareer(careerId,
+        assertThrows(ResponseStatusException.class, () -> careerService.updateCareer(careerId,
                 "newName", "newLocation", "newJobDescription",
                 "newCompanyDescription"));
 
@@ -190,16 +195,81 @@ public class CareerServiceTest {
     }
 
     @Test
-    void deleteCareer_isSuccessful() {
+    void deleteCareer_idMatches_isSuccessful() {
         String careerId = randomUUID().toString();
+        String userId = "Gambit";
 
-        // WHEN
-        careerService.deleteCareer(careerId);
+        CareerRecord careerRecord = new CareerRecord();
+        careerRecord.setId(careerId);
+        careerRecord.setId(userId);
 
-        // THEN
+        when(careerRepository.findById(careerId)).thenReturn(Optional.of(careerRecord));
+
+        careerService.deleteCareer(careerId, userId);
+
         verify(careerRepository).deleteById(careerId);
+    }
 
+    @Test
+    void deleteCareer_unauthorized_notSuccessful() {
+        String careerId = randomUUID().toString();
+        String userId = "Thor";
+        String unauthorizedUserId = "Star Lord";
+
+        CareerRecord careerRecord = new CareerRecord();
+        careerRecord.setId(careerId);
+        careerRecord.setId(userId);
+
+        when(careerRepository.findById(careerId)).thenReturn(Optional.of(careerRecord));
+
+        assertThrows(ResponseStatusException.class, () -> {
+            careerService.deleteCareer(careerId, unauthorizedUserId);
+        });
+
+        verify(careerRepository, never()).deleteById(careerId);
+    }
+
+    @Test
+    void deleteCareer_careerNotFound_notSuccessful() {
+        String careerId = randomUUID().toString();
+        String userId = "Nicholas Fury";
+
+        when(careerRepository.findById(careerId)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> {
+            careerService.deleteCareer(careerId, userId);
+        });
+
+        verify(careerRepository, never()).deleteById(careerId);
+    }
+
+    @Test
+    void getUsers_isValid_byUserId() {
+
+        UserAccounts fakeAccount = new UserAccounts();
+        fakeAccount.setId("5464768");
+        fakeAccount.setName("Pepper Potts");
+
+        when(lambdaServiceClient.getUserAccounts("5464768")).thenReturn(fakeAccount);
+
+        CareerResponse careerResponse = careerService.getUsers("5464768");
+
+        assertEquals("5464768", careerResponse.getUserId());
+        assertEquals("Pepper Potts", careerResponse.getUserName());
+    }
+    @Test
+    void testGetUsers_UserNotFound_ThrowsNullPointerException() {
+        when(lambdaServiceClient.getUserAccounts(anyString())).thenReturn(null);
+
+        assertThrows(NullPointerException.class, () -> {
+            careerService.getUsers("253547");
+        });
+
+        verify(lambdaServiceClient).getUserAccounts("253547");
     }
 
 
+
 }
+
+

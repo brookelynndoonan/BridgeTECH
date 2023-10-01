@@ -5,13 +5,11 @@ import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
 import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.repositories.CareerRepository;
-import com.kenzie.appserver.service.model.Career;
 
 // import com.kenzie.capstone.service.client.LambdaServiceClient; Once lambdas are made we'll update this import
 // import com.kenzie.capstone.service.model.ExampleData; ^^
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccounts;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,12 +22,12 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class CareerService {
-
     private CareerRepository careerRepository;
     private LambdaServiceClient lambdaServiceClient;
 
-    public CareerService(CareerRepository careerRepository) {
+    public CareerService(CareerRepository careerRepository, LambdaServiceClient lambdaServiceClient) {
         this.careerRepository = careerRepository;
+        this.lambdaServiceClient = lambdaServiceClient;
     }
 
     public List<CareerResponse> findAllCareers() {
@@ -85,19 +83,41 @@ public class CareerService {
     }
 
 
-    public void deleteCareer(String id) {
-        careerRepository.deleteById(id);
+    public void deleteCareer(String id, String userId) {
+        Optional<CareerRecord> career = careerRepository.findById(id);
+
+        if (career.isPresent()) {
+            CareerRecord careerRecord = career.get();
+
+            if (careerRecord.getId().equals(userId)) {
+                careerRepository.deleteById(id);
+            } else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                        "You are not authorized to delete this career");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Career not found");
+        }
     }
 
     public CareerResponse getUsers(String userId) {
+
         UserAccounts users = lambdaServiceClient.getUserAccounts(userId);
 
         CareerResponse careerResponse = new CareerResponse();
-        careerResponse.setUserId(users.getId());
-        careerResponse.setUserName(users.getName());
+
+        if (users != null) {
+            careerResponse.setUserId(users.getId());
+            careerResponse.setUserName(users.getName());
+        } else {
+
+            throw new NullPointerException("User not found");
+        }
 
         return careerResponse;
     }
+
+
 
     // PRIVATE HELPER METHODS
     private CareerRecord createCareerRecordFromRequest(CareerCreateRequest request) {
