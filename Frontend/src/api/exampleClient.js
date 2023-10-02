@@ -55,15 +55,24 @@ export default class ExampleClient extends BaseClass {
             this.handleError("createExample", error, errorCallback);
         }
     }
+    // Career controller --------------------------------------------------------------------------------------------------
+    async getUserAccounts(user, errorCallback){
+        try {
+            const response = await this.client.get(`/Career/ ${userId}`)
+        } catch (error){
+            this.handleError("getUserAccounts", error, errorCallback);
+        }
+    }
+
 
     // Career controller --------------------------------------------------------------------------------------------------
 
     async getAllCareers(errorCallback){
         try {
             const response = await this.client.get(`Career`);
-
+            return response.data;
     } catch (error){
-        this.handleError("getAllCareers",error, errorCallback)
+        this.handleError("getAllCareers",error, errorCallback);
         }
     }
 
@@ -77,9 +86,11 @@ export default class ExampleClient extends BaseClass {
     }
 
 
-    async updateCareerById( Id, errorCallback){
+    async updateCareerById( Id,name, errorCallback){
         try {
-        const response = await this.client.post(`/Career/ ${Id}`);
+        const response = await this.client.post(`/Career/ ${Id}`, {
+            name: name
+        });
         return response.data;
         } catch (error){
             this.handleError("updateCareerById", error, errorCallback);
@@ -87,6 +98,12 @@ export default class ExampleClient extends BaseClass {
     }
 
     async searchCareerById(Id, errorCallback){
+        try {
+            const response = await this.client.get(`Career ${Id}`)
+            return response.data;
+        }catch (error){
+            this.handleError("searchCareerById", error, errorCallback);
+        }
 
     }
 
@@ -103,14 +120,25 @@ export default class ExampleClient extends BaseClass {
 
     async deleteCustomerById(Id, errorCallback){
 try {
+    const response = await this.client.delete(`/Career/ ${Id} `)
+    return response.data;
 
 } catch (error){
-    this.handleError(dele)
+    this.handleError("deleteCustomerById", error, errorCallback);
 }
     }
 
+    async getUserAccount(userId, errorCallback){
+        try {
+            const response = await this.client.get(`/Career/user/ ${userId}`)
 
-    // userAccount controller --------------------------------------------------------------------------------------------------
+        } catch (error){
+
+        }
+    }
+
+
+    // Company controller --------------------------------------------------------------------------------------------------
 
 
 
