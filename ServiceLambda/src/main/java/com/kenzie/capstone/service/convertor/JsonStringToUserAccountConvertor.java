@@ -2,12 +2,13 @@ package com.kenzie.capstone.service.convertor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.kenzie.capstone.service.exception.InvalidDataException;
 import com.kenzie.capstone.service.model.UserAccountsRequest;
+
+import com.kenzie.capstone.service.exception.InvalidDataException;
 
 public class JsonStringToUserAccountConvertor {
 
-    public UserAccountsRequest convert(String body){
+    public UserAccountsRequest convert(String body) {
         try {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
