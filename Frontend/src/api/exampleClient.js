@@ -86,9 +86,11 @@ export default class ExampleClient extends BaseClass {
     }
 
 
-    async updateCareerById( Id, errorCallback){
+    async updateCareerById( Id,name, errorCallback){
         try {
-        const response = await this.client.post(`/Career/ ${Id}`);
+        const response = await this.client.post(`/Career/ ${Id}`, {
+            name: name
+        });
         return response.data;
         } catch (error){
             this.handleError("updateCareerById", error, errorCallback);
@@ -124,6 +126,15 @@ try {
 } catch (error){
     this.handleError("deleteCustomerById", error, errorCallback);
 }
+    }
+
+    async getUserAccount(userId, errorCallback){
+        try {
+            const response = await this.client.get(`/Career/user/ ${userId}`)
+
+        } catch (error){
+
+        }
     }
 
 

@@ -2,7 +2,7 @@ import BaseClass from "../util/baseClass";
 import DataStore from "../util/DataStore";
 import ExampleClient from "../api/exampleClient";
 
-class signUpPage extends BaseClass {
+class SignUpPage extends BaseClass {
 
 
     constructor() {
@@ -12,21 +12,21 @@ class signUpPage extends BaseClass {
     }
 
     async mount(){
+        document.getElementById('signUp-form').addEventListener('submit', this.onCreate);
+        this.client = new ExampleClient();
 
+        // this.dataStore.addChangeListener(this.renderSignUp)
     }
 
-    async renderSignUp(){
-
-    }
 
     async onCreate(event){
         event.preventDefault();
-        this.dataStore.set("", null);
+        this.dataStore.set("user", null);
 
         let name = document.getElementsByName("firstName", "email", "psw").value;
 
         const  createdUser = await this.client.createCareer(name , this.errorHandler);
-        this.dataStore.set("", createdUser);
+        this.dataStore.set("user", createdUser);
 
         if (createdUser){
             this.showMessage(`Created ${createdUser.name}!`)
@@ -39,6 +39,13 @@ class signUpPage extends BaseClass {
 
     }
 }
+
+const main = async () => {
+    const  signUpPage = new SignUpPage();
+    await signUpPage.mount();
+};
+
+window.addEventListener('DOMContentLoaded', main);
 
 //sign up page add new information and creates a new user page
 //to be pushed to the lambdas through the career controller
