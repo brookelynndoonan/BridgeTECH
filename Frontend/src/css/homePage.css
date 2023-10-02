@@ -22,7 +22,7 @@ body{
 
 /* Styling the header */
 .header_home {
-    background-color:#333;
+    background-color:#647d90;
     display: flex;
     flex-wrap: wrap;
     margin-inline: auto;
@@ -36,7 +36,7 @@ body{
     vertical-align: top;
     width: 100%;
     overflow: hidden;
-    background-color: #333;
+    background-color: #647d90;
 }
 
 .title-container li {

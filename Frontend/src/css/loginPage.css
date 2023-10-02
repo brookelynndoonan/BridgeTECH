@@ -24,8 +24,8 @@
     top: 18px;
     width: 30px;
     position: absolute;
-    background: #f3e125;
-    box-shadow: 20px 0px 50px 40px #f3e125;
+    background: #faca61;
+    box-shadow: 20px 0px 50px 40px #faca61;
     animation: floating 3s ease-in-out infinite alternate;
 }
 .form-container::after{
@@ -34,8 +34,8 @@
     height: 30px;
     width: 30px;
     right: 0;
-    box-shadow: -20px 0px 50px 40px #29b4ff;
-    background: #29b4ff;
+    box-shadow: -20px 0px 50px 40px #003c52;
+    background: #003c52;
     bottom: 18px;
     position: absolute;
     z-index: -1;
