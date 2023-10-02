@@ -23,9 +23,13 @@ class SignUpPage extends BaseClass {
         event.preventDefault();
         this.dataStore.set("user", null);
 
-        let name = document.getElementsByName("firstName", "email", "psw").value;
+        let firstName = document.getElementById("firstName").value;
+        let lastName = document.getElementById("lastname")
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("psw").value;
+        let pathCategory = document.getElementById("path-category").value;
 
-        const  createdUser = await this.client.createCareer(name , this.errorHandler);
+        const  createdUser = await this.client.createCareer(firstName, lastName, email, password , pathCategory, this.errorHandler);
         this.dataStore.set("user", createdUser);
 
         if (createdUser){
@@ -35,9 +39,9 @@ class SignUpPage extends BaseClass {
         }
     }
 
-    async onDelete(event){
-
-    }
+    // async onDelete(event){
+    //
+    // }
 }
 
 const main = async () => {
