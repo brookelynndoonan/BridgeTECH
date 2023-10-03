@@ -2,6 +2,7 @@ package com.kenzie.capstone.service.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.util.Objects;
@@ -13,8 +14,18 @@ public class UserAccountRecord {
     private String name;
     private String accountType;
     private String password;
+    private String email;
 
-    @DynamoDBHashKey(attributeName = "id")
+    @DynamoDBHashKey(attributeName = "email")
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "IdIndex", attributeName = "id")
     public String getId() {
         return id;
     }
@@ -22,6 +33,7 @@ public class UserAccountRecord {
     public void setId(String id) {
         this.id = id;
     }
+
     @DynamoDBAttribute(attributeName = "name")
     public String getName() {
         return name;
@@ -30,6 +42,7 @@ public class UserAccountRecord {
     public void setName(String name) {
         this.name = name;
     }
+
     @DynamoDBAttribute(attributeName = "Account Type")
     public String getAccountType() {
         return accountType;

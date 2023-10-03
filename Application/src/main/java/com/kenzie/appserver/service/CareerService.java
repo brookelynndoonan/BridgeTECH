@@ -1,16 +1,14 @@
 package com.kenzie.appserver.service;
 
-
 import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
 import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.repositories.CareerRepository;
 
-// import com.kenzie.capstone.service.client.LambdaServiceClient; Once lambdas are made we'll update this import
-// import com.kenzie.capstone.service.model.ExampleData; ^^
-import com.kenzie.capstone.service.client.ApiGatewayException;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccounts;
+import com.kenzie.capstone.service.model.UserAccountsRequest;
+import com.kenzie.capstone.service.model.UserAccountsResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,7 +35,7 @@ public class CareerService {
                 true).collect(Collectors.toList());
 
         return recordList.stream()
-                .map(record -> createCareerResponseFromRecord(record))
+                .map(this::createCareerResponseFromRecord)
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +43,7 @@ public class CareerService {
 
         CareerResponse careerInfo = careerRepository
                 .findById(id)
-                .map(careerRecord -> createCareerResponseFromRecord(careerRecord))
+                .map(this::createCareerResponseFromRecord)
                 .orElse(null);
 
         return careerInfo;
@@ -101,19 +99,37 @@ public class CareerService {
         }
     }
 
-    public CareerResponse getUsers(String userId) throws ApiGatewayException {
+    public CareerResponse getUsers(String userId) {
         UserAccounts users = lambdaServiceClient.getUserAccounts(userId);
 
-        CareerResponse careerResponse = new CareerResponse();
-
         if (users != null) {
+            CareerResponse careerResponse = new CareerResponse();
             careerResponse.setUserId(users.getId());
             careerResponse.setUserName(users.getName());
-        } else {
-            throw new ApiGatewayException("User not found");
-        }
 
-        return careerResponse;
+            return careerResponse;
+        } else {
+            return null;
+        }
+    }
+
+    public CareerResponse createUser(String name, String accountType, String password) throws Exception {
+        String userId = UUID.randomUUID().toString();
+
+        UserAccountsRequest userRequest = new UserAccountsRequest(name, accountType, password, userId);
+
+        UserAccountsResponse newUser = lambdaServiceClient.setUserAccounts(userRequest);
+
+        if (newUser != null) {
+            CareerResponse careerResponse = new CareerResponse();
+            careerResponse.setUserId(newUser.getId());
+            careerResponse.setUserName(newUser.getName());
+            careerResponse.setAccountType(newUser.getAccountType());
+            careerResponse.setPassword(newUser.getPassword());
+            return careerResponse;
+        } else {
+            throw new Exception("Cannot create account");
+        }
     }
 
 

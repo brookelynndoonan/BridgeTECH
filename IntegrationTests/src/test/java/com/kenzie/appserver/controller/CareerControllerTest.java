@@ -1,46 +1,37 @@
 package com.kenzie.appserver.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.kenzie.appserver.IntegrationTest;
-import com.kenzie.appserver.config.LambdaServiceClientConfiguration;
 import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
-import com.kenzie.appserver.controller.model.CreateUserRequest;
 import com.kenzie.appserver.service.CareerService;
-import com.kenzie.appserver.service.model.Career;
-import com.kenzie.appserver.service.model.Example;
 import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @IntegrationTest
 public class CareerControllerTest {
 
     @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     private CareerService careerService;
 
     private static final MockNeat mockNeat = MockNeat.threadLocal();
@@ -54,11 +45,61 @@ public class CareerControllerTest {
 
     @Test
     public void getById_Exists() throws Exception {
-        CareerResponse userId = careerService.getUsers("userId");
+        CareerResponse expectedResponse = new CareerResponse();
+        expectedResponse.setUserId("65412");
 
-        mockMvc.perform(get("/Industry/user/{userId}", userId)
+        when(careerService.getUsers(anyString())).thenReturn(expectedResponse);
+
+        mockMvc.perform(get("/Career/user/{id}", "65412")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("userId").isString())
+                .andExpect(jsonPath("userId").value("65412"))
                 .andExpect(status().is2xxSuccessful());
     }
+
+    @Test
+    public void testCreateUser_Success() throws Exception {
+        CareerCreateRequest request = new CareerCreateRequest();
+        request.setName("John Doe");
+        request.setAccountType("Standard");
+        request.setPassword("password123");
+
+        CareerResponse expectedResponse = new CareerResponse();
+        expectedResponse.setUserId("6541");
+        expectedResponse.setUserName("Bruce Banner");
+        expectedResponse.setAccountType("Hulked");
+        expectedResponse.setPassword("Scienc3Rul3$");
+
+        when(careerService.createUser(any(String.class), any(String.class), any(String.class)))
+                .thenReturn(expectedResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/Career/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.header().string("Location", "/Career/user/6541"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value("123"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userName").value("Bruce Banner"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.accountType").value("Hulked"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("Scienc3Rul3$"));
+    }
+
+    @Test
+    public void createUser_notValid_noUserCreated() throws Exception {
+        CareerCreateRequest request = new CareerCreateRequest();
+        request.setName("Peter Parker");
+        request.setAccountType("Regular");
+        request.setPassword("M@ryJ@n3");
+
+        when(careerService.createUser(any(String.class), any(String.class), any(String.class)))
+                .thenThrow(new Exception("User account was not created."));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/Career/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+    }
 }
+
+
