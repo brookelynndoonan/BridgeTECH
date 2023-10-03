@@ -11,6 +11,8 @@ import com.kenzie.appserver.service.model.Example;
 import com.kenzie.capstone.service.client.ApiGatewayException;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccounts;
+import com.kenzie.capstone.service.model.UserAccountsRequest;
+import com.kenzie.capstone.service.model.UserAccountsResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CareerServiceTest {
@@ -113,6 +114,7 @@ public class CareerServiceTest {
 
     @Test
     void addNewCareer_isValid_careerIsAdded() {
+        // GIVEN
         String careerName = "careerName";
 
         CareerCreateRequest request = new CareerCreateRequest();
@@ -197,22 +199,26 @@ public class CareerServiceTest {
 
     @Test
     void deleteCareer_idMatches_isSuccessful() {
+        // GIVEN
         String careerId = randomUUID().toString();
-        String userId = "Gambit";
+        String userId = "Black Widow";
 
         CareerRecord careerRecord = new CareerRecord();
         careerRecord.setId(careerId);
         careerRecord.setId(userId);
 
+        // WHEN
         when(careerRepository.findById(careerId)).thenReturn(Optional.of(careerRecord));
 
         careerService.deleteCareer(careerId, userId);
 
+        // THEN
         verify(careerRepository).deleteById(careerId);
     }
 
     @Test
     void deleteCareer_unauthorized_notSuccessful() {
+        // GIVEN
         String careerId = randomUUID().toString();
         String userId = "Thor";
         String unauthorizedUserId = "Star Lord";
@@ -221,8 +227,10 @@ public class CareerServiceTest {
         careerRecord.setId(careerId);
         careerRecord.setId(userId);
 
+        // WHEN
         when(careerRepository.findById(careerId)).thenReturn(Optional.of(careerRecord));
 
+        // THEN
         assertThrows(ResponseStatusException.class, () -> {
             careerService.deleteCareer(careerId, unauthorizedUserId);
         });
@@ -232,11 +240,14 @@ public class CareerServiceTest {
 
     @Test
     void deleteCareer_careerNotFound_notSuccessful() {
+        // GIVEN
         String careerId = randomUUID().toString();
         String userId = "Nicholas Fury";
 
+        // WHEN
         when(careerRepository.findById(careerId)).thenReturn(Optional.empty());
 
+        // THEN
         assertThrows(ResponseStatusException.class, () -> {
             careerService.deleteCareer(careerId, userId);
         });
@@ -246,13 +257,15 @@ public class CareerServiceTest {
 
     @Test
     void getUsers_isValid_byUserId() {
-
+        // GIVEN
         UserAccounts fakeAccount = new UserAccounts();
         fakeAccount.setId("5464768");
         fakeAccount.setName("Pepper Potts");
 
+        // WHEN
         when(lambdaServiceClient.getUserAccounts("5464768")).thenReturn(fakeAccount);
 
+        // THEN
         CareerResponse careerResponse = careerService.getUsers("5464768");
 
         assertEquals("5464768", careerResponse.getUserId());
@@ -260,18 +273,51 @@ public class CareerServiceTest {
     }
 
     @Test
-    void testGetUsers_UserNotFound_ThrowsException() {
-        String userId = "253547";
+    public void testGetUsers_NullResponse() {
+        // GIVEN/WHEN
+        when(lambdaServiceClient.getUserAccounts(anyString())).thenReturn(null);
 
-        when(lambdaServiceClient.getUserAccounts(userId)).thenReturn(null);
+        CareerResponse careerResponse = careerService.getUsers("452452");
 
-        assertThrows(ApiGatewayException.class, () -> {
-            careerService.getUsers(userId);
+        // THEN
+        assertNull(careerResponse);
+    }
+
+    @Test
+    public void testCreateUser_Success() throws Exception {
+        // GIVEN
+        UserAccountsResponse userAccountsResponse = new UserAccountsResponse();
+        userAccountsResponse.setId("74654");
+        userAccountsResponse.setName("Remy LeBeau");
+        userAccountsResponse.setAccountType("Card Magic");
+        userAccountsResponse.setPassword("G@mb1t");
+
+        // WHEN
+        when(lambdaServiceClient.setUserAccounts(any(UserAccountsRequest.class))).thenReturn(userAccountsResponse);
+
+        CareerResponse careerResponse = careerService.createUser("Remy LeBeau", "Card Magic",
+                "G@mb1t");
+
+        // THEN
+        assertEquals("74654", careerResponse.getUserId());
+        assertEquals("Remy LeBeau", careerResponse.getUserName());
+        assertEquals("Card Magic", careerResponse.getAccountType());
+        assertEquals("G@mb1t", careerResponse.getPassword());
+    }
+
+    @Test
+    public void testCreateUser_NullResponse() throws Exception {
+        // GIVEN/WHEN
+        when(lambdaServiceClient.setUserAccounts(any(UserAccountsRequest.class))).thenReturn(null);
+
+        // THEN
+        assertThrows(Exception.class, () -> {
+            careerService.createUser("Dr. Jean Grey", "Professor", "Ph0en1xRul3z");
         });
-
-        verify(lambdaServiceClient).getUserAccounts(userId);
     }
 
 }
+
+
 
 
