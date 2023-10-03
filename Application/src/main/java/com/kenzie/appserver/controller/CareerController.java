@@ -73,7 +73,7 @@ public class CareerController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable String userId) {
+    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable("userId") String userId) {
         CareerResponse careerResponse = careerService.getUsers(userId);
 
         if (careerResponse == null) {

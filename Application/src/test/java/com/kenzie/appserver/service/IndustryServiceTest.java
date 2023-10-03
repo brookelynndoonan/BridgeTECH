@@ -132,7 +132,7 @@ public class IndustryServiceTest {
     void findAllIndustriesByName_isValid_returnsListOfIndustries() {
         List<IndustriesRecord> industryRecords = new ArrayList<>();
         industryRecords.add(new IndustriesRecord());
-        when(industryRepository.findListOfIndustriesName(anyString())).thenReturn(industryRecords);
+        when(industryRepository.findByIndustryName(anyString())).thenReturn(industryRecords);
 
         List<IndustryResponse> result = industriesService.findAllIndustriesByName("IndustryName");
 

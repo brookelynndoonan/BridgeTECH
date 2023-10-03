@@ -52,7 +52,7 @@ public class IndustriesService {
     }
 
     public List<IndustryResponse> findAllIndustriesByName(String industryName) {
-        List<IndustriesRecord> recordList = industryRepository.findListOfIndustriesName(industryName);
+        List<IndustriesRecord> recordList = industryRepository.findByIndustryName(industryName);
 
         return recordList.stream()
                 .map(this::industryResponseFromRecord)

@@ -15,7 +15,7 @@ public class LambdaServiceClient {
 
     private static final String SET_USERACCOUNT_ENDPOINT = "useraccount";
 
-    private static final String GET_USERACCOUNT_ENDPOINT = "useraccount/{id}";
+    private static final String GET_USERACCOUNT_ENDPOINT = "useraccount/{userId}";
 
     private ObjectMapper mapper;
 

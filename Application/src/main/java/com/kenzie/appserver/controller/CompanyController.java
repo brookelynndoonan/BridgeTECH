@@ -53,8 +53,8 @@ public class CompanyController {
         return ResponseEntity.ok(companies);
     }
 
-    @GetMapping
-    public ResponseEntity<List<CompanyResponse>> getAllCompaniesByName(String companyName) {
+    @GetMapping("/byName")
+    public ResponseEntity<List<CompanyResponse>> getAllCompaniesByName(@RequestParam("companyName") String companyName) {
         List<CompanyResponse> companies = companiesService.findAllCompaniesByName(companyName);
         if (companies == null || companies.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -63,7 +63,7 @@ public class CompanyController {
         return ResponseEntity.ok(companies);
     }
 
-    @GetMapping("/{Id}")
+    @GetMapping("/company/{Id}")
     public ResponseEntity<CompanyResponse> searchCompanyById(@PathVariable("Id") String companyId) {
         CompanyResponse companyResponse = companiesService.findCompanyById(companyId);
         if (companyResponse == null) {
@@ -72,8 +72,8 @@ public class CompanyController {
         return ResponseEntity.ok(companyResponse);
     }
 
-    @GetMapping("/{Name}")
-    public ResponseEntity<CompanyRecord> searchCompanyByName(@PathVariable("Name") String companyName) {
+    @GetMapping("/companyName/byCompanyName/{CompanyName}")
+    public ResponseEntity<CompanyRecord> searchCompanyByName(@PathVariable("CompanyName") String companyName) {
         CompanyRecord companyRecord = companiesService.findCompanyByName(companyName);
         if (companyRecord == null) {
             return ResponseEntity.notFound().build();

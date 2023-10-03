@@ -8,6 +8,7 @@ import com.kenzie.appserver.repositories.CareerRepository;
 
 // import com.kenzie.capstone.service.client.LambdaServiceClient; Once lambdas are made we'll update this import
 // import com.kenzie.capstone.service.model.ExampleData; ^^
+import com.kenzie.capstone.service.client.ApiGatewayException;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccounts;
 import org.springframework.http.HttpStatus;
@@ -100,8 +101,7 @@ public class CareerService {
         }
     }
 
-    public CareerResponse getUsers(String userId) {
-
+    public CareerResponse getUsers(String userId) throws ApiGatewayException {
         UserAccounts users = lambdaServiceClient.getUserAccounts(userId);
 
         CareerResponse careerResponse = new CareerResponse();
@@ -110,13 +110,11 @@ public class CareerService {
             careerResponse.setUserId(users.getId());
             careerResponse.setUserName(users.getName());
         } else {
-
-            throw new NullPointerException("User not found");
+            throw new ApiGatewayException("User not found");
         }
 
         return careerResponse;
     }
-
 
 
     // PRIVATE HELPER METHODS
