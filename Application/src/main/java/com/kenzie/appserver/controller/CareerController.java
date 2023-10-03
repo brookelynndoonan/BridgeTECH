@@ -37,9 +37,9 @@ public class CareerController {
 
 
     @PostMapping("/{Id}")
-    public ResponseEntity<CareerResponse> updateCareer(@PathVariable("Id")
+    public ResponseEntity<CareerResponse> updateCareer(@PathVariable("Id") String id,
                                                        @RequestBody CareerCreateRequest careerCreateRequest) {
-        CareerResponse response = careerService.updateCareer(careerCreateRequest.getName(), careerCreateRequest.getId(),
+        CareerResponse response = careerService.updateCareer(careerCreateRequest.getName(), id,
                 careerCreateRequest.getLocation(), careerCreateRequest.getCompanyDescription(),
                 careerCreateRequest.getJobDescription());
 
@@ -65,7 +65,6 @@ public class CareerController {
         return ResponseEntity.ok(careerResponse);
     }
 
-    //Look into more about how we are deleting things, based off User criteria.
     @DeleteMapping("/{Id}")
     public ResponseEntity deleteCustomerById(@PathVariable("Id") String careerId,
                                              @RequestParam("userId") String userId) {
@@ -74,7 +73,7 @@ public class CareerController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable String userId) {
+    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable("userId") String userId) {
         CareerResponse careerResponse = careerService.getUsers(userId);
 
         if (careerResponse == null) {

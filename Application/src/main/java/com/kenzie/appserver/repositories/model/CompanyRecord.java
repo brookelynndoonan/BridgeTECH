@@ -12,6 +12,16 @@ public class CompanyRecord {
     private String companyName;
     private String companyDescription;
     private String companyId;
+    private String name;
+
+    @DynamoDBAttribute(attributeName = "name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @DynamoDBAttribute(attributeName = "Company Name")
     public String getCompanyName() {

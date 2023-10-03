@@ -9,7 +9,7 @@ import java.util.List;
 @EnableScan
 public interface CompanyRepository extends CrudRepository<CompanyRecord, String> {
 
-    List<CompanyRecord> findListOfCompaniesName(String companyName);
+    List<CompanyRecord> findByCompanyName(String companyName);
 
     CompanyRecord findCompanyByName(String companyName);
 }

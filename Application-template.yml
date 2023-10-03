@@ -68,6 +68,10 @@ Resources:
         - 'arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService'
       RoleName: 'aws-elasticbeanstalk-service-role'
 
+  SolutionStackName:
+    Type: String
+    Default: 64bit Amazon Linux 2 v3.3.1 running Corretto 11
+
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
