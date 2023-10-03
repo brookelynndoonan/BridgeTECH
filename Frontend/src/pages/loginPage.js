@@ -37,7 +37,7 @@ class LoginPage extends BaseClass {
 
 const main = async () => {
     const loginPage = new LoginPage();
-    loginPage.mount();
+   await loginPage.mount();
 };
 
 window.addEventListener('DOMContentLoaded', main);
