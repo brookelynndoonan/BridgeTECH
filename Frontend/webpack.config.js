@@ -9,7 +9,10 @@ module.exports = {
   },
   entry: {
     examplePage: path.resolve(__dirname, 'src', 'pages', 'examplePage.js'),
-    homePage: path.resolve(__dirname, 'src', 'pages', 'homePage.js'),
+    loginPage: path.resolve(__dirname, 'src', 'pages', 'loginPage.js'),
+    signUpPage: path.resolve(__dirname, 'src', 'pages', 'signUpPage.js'),
+    careerPage: path.resolve(__dirname, 'src', 'pages', 'careerPage.js'),
+
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -21,9 +24,7 @@ module.exports = {
     open: true,
     proxy: [
       {
-        context: [
-          '/example',
-        ],
+        context: ['/example','/Career','/Company','/Industry'],
         target: 'http://localhost:5001'
       }
     ]
@@ -37,6 +38,22 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/homePage.html',
       filename: 'homePage.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/signUpForm.html',
+      filename: 'signUpForm.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/careerPage.html',
+      filename: 'careerPage.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/loginPage.html',
+      filename: 'loginPage.html',
+      inject: false
     }),
     new CopyPlugin({
       patterns: [

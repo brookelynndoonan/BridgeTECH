@@ -1,19 +1,12 @@
 import BaseClass from "../util/baseClass";
 import axios from 'axios'
 
-/**
- * Client to call the MusicPlaylistService.
- *
- * This could be a great place to explore Mixins. Currently the client is being loaded multiple times on each page,
- * which we could avoid using inheritance or Mixins.
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#Mix-ins
- * https://javascript.info/mixins
- */
+
 export default class ExampleClient extends BaseClass {
 
     constructor(props = {}){
         super();
-        const methodsToBind = ['clientLoaded', 'getAllCareers', 'getCareerById', 'updateCareerById', 'searchCareerById', 'createCareer', 'deleteCustomerById', 'addNewCompany', 'updateCompany', 'getAllCompanies', 'getCompaniesByName', 'searchCompaniesById', 'searchCompanyByName', ''];
+        const methodsToBind = ['clientLoaded', 'getAllCareers', 'getCareerById', 'updateCareerById', 'searchCareerById', 'createCareer', 'deleteCustomerById', 'getUserAccount' , 'createUserAccount' , 'addNewCompany', 'updateCompany', 'getAllCompanies', 'getCompaniesByName', 'searchCompaniesById', 'searchCompanyByName', 'getAllCompaniesByName', 'deleteCompanyById', 'addNewIndustry', 'updateIndustry', 'getAllIndustries' ,'getAllIndustriesByName', 'searchIndustryByName', 'searchIndustryById', 'deleteIndustryById'];
         this.bindClassMethods(methodsToBind, this);
         this.props = props;
         this.clientLoaded(axios);
@@ -51,9 +44,9 @@ export default class ExampleClient extends BaseClass {
 
     async getAllCareers(errorCallback){
         try {
-            const response = await this.client.get(`Career`);
+            const response = await this.client.get(`/Career/`);
             return response.data;
-    } catch (error){
+        } catch (error){
         this.handleError("getAllCareers",error, errorCallback);
         }
     }
@@ -81,7 +74,7 @@ export default class ExampleClient extends BaseClass {
 
     async searchCareerById(Id, errorCallback){
         try {
-            const response = await this.client.get(`Career ${Id}`)
+            const response = await this.client.get(`/Career/ ${Id}`)
             return response.data;
         }catch (error){
             this.handleError("searchCareerById", error, errorCallback);
@@ -91,7 +84,7 @@ export default class ExampleClient extends BaseClass {
 
     async createCareer(name, errorCallback){
         try {
-            const response = await this.client.post(`Career`, {
+            const response = await this.client.post(`/Career/`, {
                 name : name
             });
             return response.data;
@@ -101,13 +94,13 @@ export default class ExampleClient extends BaseClass {
     }
 
     async deleteCustomerById(Id, errorCallback){
-try {
-    const response = await this.client.delete(`/Career/ ${Id} `)
-    return response.data;
+        try {
+             const response = await this.client.delete(`/Career/ ${Id} `)
+             return response.data;
 
-} catch (error){
-    this.handleError("deleteCustomerById", error, errorCallback);
-}
+        } catch (error){
+              this.handleError("deleteCustomerById", error, errorCallback);
+        }
     }
 
     async getUserAccount(userId, errorCallback){
@@ -169,8 +162,8 @@ try {
 
     async searchCompaniesById(Id, errorCallback){
         try {
-        const response = await this.client.get(`/Company/ ${Id}`)
-        return response.data;
+             const response = await this.client.get(`/Company/ ${Id}`)
+              return response.data;
         } catch (error){
             this.handleError("searchCompaniesById", error, errorCallback);
         }
@@ -178,7 +171,7 @@ try {
 
     async searchCompanyByName(Name, errorCallback){
         try {
-            const response = await this.client.get(`/Career/ ${Name}`)
+            const response = await this.client.get(`/Company/ ${Name}`)
             return response.data;
         } catch (error){
             this.handleError("searchCompanyByName", error, errorCallback);
@@ -196,6 +189,74 @@ try {
 
     // Industry controller --------------------------------------------------------------------------------------------------
 
+    async addNewIndustry(errorCallback){
+        try {
+            const response = await this.client.post(`/Industry/`)
+            return response.data;
+        }catch (error){
+            this.handleError("addNewIndustry", error, errorCallback);
+        }
+    }
+
+    async updateIndustry(Id, errorCallback){
+        try {
+            const response = await this.client.post(`/Industry/ ${Id}`)
+            return response.data;
+
+        } catch (error){
+            this.handleError("updateIndustry", error, errorCallback);
+        }
+    }
+
+    async getAllIndustries(errorCallback){
+        try {
+            const response = await this.client.get(`/Industry/`)
+            return response.data;
+        }catch (error){
+            this.handleError("getAllIndustries", error, errorCallback);
+        }
+    }
+
+    async getAllIndustriesByName(byName, errorCallback){
+        try {
+            const response = await this.client.get(`/Industry/byName/`);
+            return response.data;
+
+        }catch (error){
+            this.handleError("getAllIndustriesByName", error, errorCallback);
+        }
+    }
+
+    async searchIndustryById(Id, errorCallback){
+        try {
+            const response = await this.client.get(`/Industry/industry/ ${Id}`)
+            return response.data;
+        }catch (error){
+            this.handleError("searchIndustryById", error, errorCallback);
+        }
+    }
+
+    async searchIndustryByName(IndustryName, industryName, errorCallBack){
+       try {
+           const response = await this.client.get(`/Industry/industryName/byIndustryName/ ${IndustryName}`,{
+               name : industryName
+           });
+           return response.data;
+       } catch (error){
+           this.handleError("searchIndustryByName", error, errorCallBack);
+       }
+
+    }
+
+    async deleteIndustryById(Id, errorCallBack){
+        try {
+            const  response = await this.client.delete(`/Industry/ ${Id}`)
+            return response.data;
+
+        }catch (error){
+            this.handleError("deleteIndustryById", error, errorCallBack);
+        }
+    }
     /**
      * Helper method to log the error and run any error functions.
      * @param error The error received from the server.
