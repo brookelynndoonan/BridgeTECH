@@ -40,18 +40,18 @@ public class CompaniesService {
                 .orElse(null);
     }
 
-    public CompanyRecord findCompanyByName(String name) {
+    public CompanyRecord findCompanyByName(String companyName) {
 
-        if (name != null) {
+        if (companyName != null) {
 
-            return companyRepository.findCompanyByName(name);
+            return companyRepository.findCompanyByName(companyName);
         } else {
             return null;
         }
     }
 
     public List<CompanyResponse> findAllCompaniesByName(String companyName) {
-        List<CompanyRecord> recordList = companyRepository.findListOfCompaniesName(companyName);
+        List<CompanyRecord> recordList = companyRepository.findByCompanyName(companyName);
 
         return recordList.stream()
                 .map(this::companyResponseFromRecord)

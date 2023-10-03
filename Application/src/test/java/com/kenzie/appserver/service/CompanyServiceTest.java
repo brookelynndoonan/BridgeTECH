@@ -131,7 +131,7 @@ public class CompanyServiceTest {
         // Arrange
         List<CompanyRecord> companyRecords = new ArrayList<>();
         companyRecords.add(new CompanyRecord());
-        when(companyRepository.findListOfCompaniesName(anyString())).thenReturn(companyRecords);
+        when(companyRepository.findByCompanyName(anyString())).thenReturn(companyRecords);
 
         // Act
         List<CompanyResponse> result = companiesService.findAllCompaniesByName("CompanyName");

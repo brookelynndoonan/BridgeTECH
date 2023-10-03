@@ -8,6 +8,7 @@ import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.repositories.model.ExampleRecord;
 import com.kenzie.appserver.service.model.Career;
 import com.kenzie.appserver.service.model.Example;
+import com.kenzie.capstone.service.client.ApiGatewayException;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccounts;
 import org.junit.jupiter.api.Assertions;
@@ -257,18 +258,19 @@ public class CareerServiceTest {
         assertEquals("5464768", careerResponse.getUserId());
         assertEquals("Pepper Potts", careerResponse.getUserName());
     }
-    @Test
-    void testGetUsers_UserNotFound_ThrowsNullPointerException() {
-        when(lambdaServiceClient.getUserAccounts(anyString())).thenReturn(null);
 
-        assertThrows(NullPointerException.class, () -> {
-            careerService.getUsers("253547");
+    @Test
+    void testGetUsers_UserNotFound_ThrowsException() {
+        String userId = "253547";
+
+        when(lambdaServiceClient.getUserAccounts(userId)).thenReturn(null);
+
+        assertThrows(ApiGatewayException.class, () -> {
+            careerService.getUsers(userId);
         });
 
-        verify(lambdaServiceClient).getUserAccounts("253547");
+        verify(lambdaServiceClient).getUserAccounts(userId);
     }
-
-
 
 }
 

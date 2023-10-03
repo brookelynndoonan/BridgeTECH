@@ -53,8 +53,8 @@ public class IndustryController {
         return ResponseEntity.ok(industries);
     }
 
-    @GetMapping
-    public ResponseEntity<List<IndustryResponse>> getAllIndustriesByName(String industryName) {
+    @GetMapping("/byName")
+    public ResponseEntity<List<IndustryResponse>> getAllIndustriesByName(@RequestParam("industryName")String industryName) {
         List<IndustryResponse> industries = industriesService.findAllIndustriesByName(industryName);
         if (industries == null || industries.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -63,7 +63,7 @@ public class IndustryController {
         return ResponseEntity.ok(industries);
     }
 
-    @GetMapping("/{Id}")
+    @GetMapping("/industry/{Id}")
     public ResponseEntity<IndustryResponse> searchIndustryById(@PathVariable("Id") String industryId) {
         IndustryResponse industryResponse = industriesService.findIndustryById(industryId);
         if (industryResponse == null) {
@@ -72,8 +72,8 @@ public class IndustryController {
         return ResponseEntity.ok(industryResponse);
     }
 
-    @GetMapping("/{Name}")
-    public ResponseEntity<IndustriesRecord> searchIndustryByName(@PathVariable("Name") String industryName) {
+    @GetMapping("/industryName/byIndustryName/{IndustryName}")
+    public ResponseEntity<IndustriesRecord> searchIndustryByName(@PathVariable("IndustryName") String industryName) {
         IndustriesRecord industriesRecord = industriesService.findIndustryByName(industryName);
         if (industriesRecord == null) {
             return ResponseEntity.notFound().build();

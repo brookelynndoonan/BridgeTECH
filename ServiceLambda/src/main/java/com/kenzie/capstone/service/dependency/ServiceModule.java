@@ -1,9 +1,9 @@
 package com.kenzie.capstone.service.dependency;
 
 import com.kenzie.capstone.service.LambdaService;
-import com.kenzie.capstone.service.dao.ExampleDao;
 
 import com.kenzie.capstone.service.dao.UserAccountsDao;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -12,11 +12,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Module(
-    includes = DaoModule.class
+        includes = DaoModule.class
 )
 public class ServiceModule {
 
-  /*  @Singleton
+    /*  @Singleton
     @Provides
     @Inject
     public LambdaService provideLambdaService(@Named("ExampleDao") ExampleDao exampleDao) {
@@ -25,7 +25,8 @@ public class ServiceModule {
 
    */
 
-// (UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage. Still need to test. still need to implemnt within our application service after testing is finish.)
+    // (UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage.
+    // Still need to test. still need to implemnt within our application service after testing is finish.)
 
     @Singleton
     @Provides
