@@ -1,1 +1,1 @@
-//
+//mount, render, onGet, onCreate, onDelete,
