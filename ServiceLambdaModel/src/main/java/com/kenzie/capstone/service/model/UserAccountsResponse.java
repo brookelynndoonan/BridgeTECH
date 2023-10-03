@@ -7,14 +7,15 @@ public class UserAccountsResponse {
     private String accountType;
     private String password;
 
-    public UserAccountsResponse(String id, String name, String accountType, String password){
+    public UserAccountsResponse(String id, String name, String accountType, String password) {
         this.id = id;
         this.name = name;
         this.accountType = accountType;
         this.password = password;
     }
 
-    public UserAccountsResponse (){}
+    public UserAccountsResponse() {
+    }
 
     public String getId() {
         return id;

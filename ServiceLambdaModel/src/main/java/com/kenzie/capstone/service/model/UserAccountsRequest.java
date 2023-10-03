@@ -5,15 +5,18 @@ public class UserAccountsRequest {
     private String name;
     private String accountType;
     private String password;
+    private String userId;
 
-    public UserAccountsRequest(String name, String accountType, String password){
+    public UserAccountsRequest(String name, String accountType, String password, String userId) {
 
         this.name = name;
         this.accountType = accountType;
         this.password = password;
+        this.userId = userId;
     }
 
-    public UserAccountsRequest (){}
+    public UserAccountsRequest() {
+    }
 
 
     public String getName() {
@@ -28,6 +31,10 @@ public class UserAccountsRequest {
         return accountType;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
@@ -40,12 +47,18 @@ public class UserAccountsRequest {
         this.password = password;
     }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         return "UserAccountsRequest{" +
                 "name='" + name + '\'' +
                 ", accountType='" + accountType + '\'' +
                 ", password='" + password + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }
+
