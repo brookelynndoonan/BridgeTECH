@@ -1,0 +1,25 @@
+
+
+@media only screen and (max-width: 767px) {
+    .alert--desktop {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .alert-container {
+        background: #3f8ae0;
+        border-radius: 12px;
+        margin: 0 0 1.5rem;
+        position: relative;
+        /*-webkit-box-sizing: border-box;*/
+        box-sizing: border-box;
+        padding: 20px 20px 20px 74px;
+        display: flex;
+        -webkit-box-align: center;
+        /*-ms-flex-align: center;*/
+        /*align-items: center;*/
+        -webkit-box-pack: justify;
+        /*-ms-flex-pack: justify;*/
+        justify-content: space-between;
+    }
+}
