@@ -1,0 +1,56 @@
+/* CSS for industryPage */
+
+.background {
+    background-color: #3a3842;
+    background-image: url(https://images.pexels.com/photos/5984612/pexels-photo-5984612.jpeg?auto=compress&cs=tinysrgb&w=800);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.main-container {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+.form-container {
+    width: 350px;
+    display: flex;
+    position: relative;
+}
+.content {
+    font-size: 2rem;
+    border: 1px solid #626262c2;
+    padding: 1.5rem;
+    width: 100%;
+    border-radius: 15px;
+    background: #626262c2;
+    backdrop-filter: blur(30px);
+    font-family: calibri;
+}
+.title-text {
+    display: block;
+    text-align: center;
+    color: white;
+}
+.field {
+    position: relative;
+    padding: 10px 0;
+}
+.field label {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 5px;
+    z-index: -1;
+    transition: .4s;
+}
+.field input {
+    color: white;
+    border: none;
+    border-bottom: 1px solid #3f3f3f;
+    background: none;
+    padding: 5px 0;
+    margin-top: 32px;
+    width: 100%;
+}
