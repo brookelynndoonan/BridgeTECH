@@ -60,7 +60,6 @@ export default class ExampleClient extends BaseClass {
         }
     }
 
-
     async updateCareerById( Id, name, errorCallback){
         try {
         const response = await this.client.post(`/Career/ ${Id}`, {
