@@ -14,7 +14,9 @@ public class CareerCreateRequest {
     private String jobDescription;
     private String companyDescription;
     @NotEmpty
+
     @JsonProperty("userName")
+
     private String userName;
     private String accountType;
     private String password;

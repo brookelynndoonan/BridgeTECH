@@ -2,6 +2,8 @@ package com.kenzie.appserver.controller;
 
 import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
+import com.kenzie.appserver.repositories.CareerRepository;
+import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.service.CareerService;
 import com.kenzie.appserver.service.ExampleService;
 import org.springframework.http.HttpStatus;
@@ -10,16 +12,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.UUID.randomUUID;
 
 @RestController
 @RequestMapping("/Career")
 public class CareerController {
     private CareerService careerService;
+    private CareerRepository careerRepository;
 
-    CareerController(CareerService careerService) {
+    CareerController(CareerService careerService, CareerRepository careerRepository) {
         this.careerService = careerService;
+        this.careerRepository = careerRepository;
     }
 
 
@@ -32,7 +39,9 @@ public class CareerController {
 
         CareerResponse response = careerService.addNewCareer(careerCreateRequest);
 
+
         return ResponseEntity.created(URI.create("/careers/" + response.getId())).body(response);
+
     }
 
 
