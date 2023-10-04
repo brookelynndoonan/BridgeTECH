@@ -21,14 +21,14 @@ public class CareerResponse {
     @JsonProperty("companydescription")
     private String companyDescription;
 
-    @JsonProperty("userName")
+    @JsonProperty("username")
     private String userName;
 
-    @JsonProperty("userId")
+    @JsonProperty("userid")
     private String userId;
     @JsonProperty("password")
     private String password;
-    @JsonProperty("accountType")
+    @JsonProperty("accounttype")
     private String accountType;
 
     public String getId() {
