@@ -60,7 +60,6 @@ export default class ExampleClient extends BaseClass {
         }
     }
 
-
     async updateCareerById( Id, name, errorCallback){
         try {
         const response = await this.client.post(`/Career/ ${Id}`, {
@@ -112,8 +111,13 @@ export default class ExampleClient extends BaseClass {
         }
     }
 
-    async createUserAccount(){
-
+    async createUserAccount(errorCallback){
+        try {
+            const response = await this.client.post(`/Career/user`)
+            return response.data;
+        } catch (error){
+            this.handleError("createUserAccount", error,errorCallback);
+        }
     }
 
 
