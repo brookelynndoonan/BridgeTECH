@@ -28,7 +28,9 @@ public class CareerResponse {
     private String userId;
     @JsonProperty("password")
     private String password;
+
     @JsonProperty("accounttype")
+
     private String accountType;
 
     public String getId() {

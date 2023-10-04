@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kenzie.appserver.IntegrationTest;
 import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
-import com.kenzie.appserver.controller.model.ExampleCreateRequest;
+
 import com.kenzie.appserver.service.CareerService;
 import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,9 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.UUID;
-
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.testcontainers.shaded.com.google.common.base.Verify.verify;
+
 
 
 @IntegrationTest
@@ -103,7 +101,9 @@ public class CareerControllerTest {
     }
 
     @Test
+
     public void createUser_isValid_successful() throws Exception {
+
         CareerCreateRequest request = new CareerCreateRequest();
         request.setName("John Doe");
         request.setAccountType("Standard");
