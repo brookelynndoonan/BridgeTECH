@@ -105,5 +105,26 @@ header_home {
     background: #626262c2;
     backdrop-filter: blur(30px);
     font-family: calibri;
-
+}
+.title-of-listing{
+    display: flex;
+    place-items: center;
+    /*justify-between;*/
+}
+.company-name{
+    white-space: nowrap;
+    display: inline-block;
+    line-height: 1.3;
+    font-weight: 600;
+}
+.company-title-position-type{
+    white-space: nowrap;
+    display: inline-block;
+    line-height: 1.3;
+}
+.job-name{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3px;
 }

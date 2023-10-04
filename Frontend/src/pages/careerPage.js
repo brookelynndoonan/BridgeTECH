@@ -20,9 +20,13 @@ class CareerPage extends BaseClass{
     }
 
     async onCreate(event){
+        //create a job Post
         event.preventDefault();
+        this.dataStore.set("Career", null);
 
-        this.dataStore.set()
+        let careerId = this.dataStore.get('Id')
+        let jobName = document.getElementById("job-name-title").value;
+
 
     }
 
