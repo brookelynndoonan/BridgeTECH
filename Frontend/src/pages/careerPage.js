@@ -2,24 +2,25 @@ import BaseClass from "../util/baseClass";
 import DataStore from "../util/DataStore";
 import ExampleClient from "../api/exampleClient";
 
-class CareerPage extends BaseClass{
+class CareerPage extends BaseClass {
 
     constructor() {
         super();
-        this.bindClassMethods(['onGet','onCreate','renderCareer'], this);
-        this.dataStore= new DataStore();
+        this.bindClassMethods(['onGet', 'onCreate', 'renderCareer'], this);
+        this.dataStore = new DataStore();
+        this.client = new ExampleClient();
     }
 
-    async mount(){
+    async mount() {
         const urlParams = new URLSearchParams(window.location.search);
         const careerId = urlParams.get('Id');
-        const career = await this.client.getCareerById(careerId, this.errorHandler);
+        const career = await this.client.getAllCareers(careerId, this.errorHandler);
         this.dataStore.set(career);
         this.dataStore.set("career", careerId);
         await this.renderCareer();
     }
 
-    async onCreate(event){
+    async onCreate(event) {
         //create a job Post
         event.preventDefault();
         this.dataStore.set("Career", null);
@@ -31,36 +32,33 @@ class CareerPage extends BaseClass{
 
     }
 
-    async renderCareer(){
-        let resultArea = document.getElementById('career-lists');
-        const career = this.dataStore.getCareerById();
+    async renderCareer() {
+        let resultArea = document.getElementById('job-posting-container');
+        const careers = await this.client.getAllCareers(); // Use getAllCareers without filters
 
-        //id,name, company description, job description
-        console.log(career);
-            resultArea.innerHTML = `
-                <div id="career-lists">
-                <div >Id: ${career.id}</div>
-                <div >Name: ${name}</div>
-                
-                </div>
+
+        if (careers && careers.length > 0) {
+            resultArea.innerHTML = careers
+                .map(
+                    (career) => `
+                    <div class="job-postings-container">
+                        <ul class="job-listings">
+                            <li class="individual-job-post">
+                                <div>Id: ${career.id}</div>
+                                <div><h4>Name: ${career.name}</h4></div>
+                                <div>Company: ${career.companyDescription}</div>
+                                <div>Job Description: ${career.jobDescription}</div>
+                            </li>
+                        </ul>
+                    </div>
                 `
-
-
-        // if(career){
-        //     resultArea.innerHTML = `
-        //     <div>ID: ${career.id}</div>
-        //     <div>Name: ${career.name}</div>
-        // `
-        // } else {
-        //     resultArea.innerHTML = "No Item";
-        // }
+                )
+                .join("");
+        } else {
+            resultArea.innerHTML = "No careers available.";
+        }
+        resultArea.appendChild(careers);
     }
-
-    //
-    // async onGet(){
-    //
-    // }
-
 
     // onDelete(){
     //
@@ -69,7 +67,7 @@ class CareerPage extends BaseClass{
 
 const main = async () => {
     const careerPage = new CareerPage();
-   await careerPage.mount();
+    await careerPage.mount();
 };
 
 window.addEventListener('DOMContentLoaded', main);

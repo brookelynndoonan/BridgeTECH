@@ -1,10 +1,56 @@
 /* CSS for industryPage */
-
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 .background {
     background-color: #3a3842;
     background-image: url(https://images.pexels.com/photos/5984612/pexels-photo-5984612.jpeg?auto=compress&cs=tinysrgb&w=800);
     background-repeat: no-repeat;
     background-size: cover;
+}
+.header_home {
+    background-color:#647d90;
+    display: flex;
+    flex-wrap: wrap;
+    margin-inline: auto;
+
+}
+
+/* Styling the navigation */
+.title-container ul {
+    list-style-type: none;
+    align-items: center;
+    vertical-align: top;
+    width: 100%;
+    overflow: hidden;
+    background-color: #647d90;
+}
+
+.title-container li {
+    float: left;
+    list-style-type: none;
+    align-items: center;
+    vertical-align: top;
+}
+
+.title-container li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 128px;
+    text-decoration: none;
+    font-family: Arial, Helvetica, calibri;
+}
+
+.title-container li a:hover:not(.active) {
+    background-color: #111;
+}
+
+/* Styling the active link */
+.active {
+    background-color: #4CAF50;
 }
 .main-container {
     display: flex;
