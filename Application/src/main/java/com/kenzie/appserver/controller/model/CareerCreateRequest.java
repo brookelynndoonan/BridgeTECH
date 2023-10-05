@@ -9,17 +9,12 @@ public class CareerCreateRequest {
     @NotEmpty
     @JsonProperty("name")
     private String name;
+    @JsonProperty("Id")
     private String id;
     private String location;
     private String jobDescription;
     private String companyDescription;
-    @NotEmpty
 
-    @JsonProperty("userName")
-
-    private String userName;
-    private String accountType;
-    private String password;
 
     public String getName() {
         return name;
@@ -61,27 +56,4 @@ public class CareerCreateRequest {
         this.companyDescription = companyDescription;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

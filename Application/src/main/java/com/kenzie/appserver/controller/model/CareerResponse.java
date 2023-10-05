@@ -21,17 +21,7 @@ public class CareerResponse {
     @JsonProperty("companyDescription")
     private String companyDescription;
 
-    @JsonProperty("userName")
-    private String userName;
 
-    @JsonProperty("userId")
-    private String userId;
-    @JsonProperty("password")
-    private String password;
-
-    @JsonProperty("accountType")
-
-    private String accountType;
 
     public String getId() {
         return id;
@@ -73,35 +63,4 @@ public class CareerResponse {
         this.companyDescription = companyDescription;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
 }

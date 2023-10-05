@@ -7,6 +7,8 @@ import com.kenzie.appserver.IntegrationTest;
 import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
 
+import com.kenzie.appserver.controller.model.UserAccountInCareerRequest;
+import com.kenzie.appserver.controller.model.UserAccountInCareerResponse;
 import com.kenzie.appserver.service.CareerService;
 import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,13 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.OPTIONAL;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -89,10 +94,10 @@ public class CareerControllerTest {
 
     @Test
     public void getUserAccounts_isValid_byId() throws Exception {
-        CareerResponse expectedResponse = new CareerResponse();
-        expectedResponse.setUserId("65412");
+        UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
+        userAccountInCareerResponse.setUserId("65412");
 
-        when(careerService.getUsers(anyString())).thenReturn(expectedResponse);
+        when(careerService.getUsers(anyString())).thenReturn(userAccountInCareerResponse);
 
         mockMvc.perform(get("/Career/user/{Id}", "65412")
                         .accept(MediaType.APPLICATION_JSON))
@@ -101,50 +106,51 @@ public class CareerControllerTest {
     }
 
     @Test
-
     public void createUser_isValid_successful() throws Exception {
+        String userName = "Bruce Banner";
+        String password = "Scienc3Rul3$";
+        String accountType = "Hulked";
+        String userId = "usldkfj24";
 
-        CareerCreateRequest request = new CareerCreateRequest();
-        request.setName("Bruce Banner");
-        request.setAccountType("Hulked");
-        request.setPassword("Scienc3Rul3$");
+        UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser(userName,
+                accountType, password, userId);
 
-        CareerResponse expectedResponse = new CareerResponse();
-        expectedResponse.setUserId("6541");
-        expectedResponse.setUserName("Bruce Banner");
-        expectedResponse.setAccountType("Hulked");
-        expectedResponse.setPassword("Scienc3Rul3$");
+        UserAccountInCareerRequest userAccountInCareerRequest = new UserAccountInCareerRequest();
+        userAccountInCareerRequest.setUserName(userName);
+        userAccountInCareerRequest.setAccountType(accountType);
+        userAccountInCareerRequest.setPassword(password);
+        userAccountInCareerRequest.setUserId(userAccountInCareerResponse.getUserId());
 
-        when(careerService.createUser(any(String.class), any(String.class), any(String.class)))
-                .thenReturn(expectedResponse);
+        mapper.registerModule(new JavaTimeModule());
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/Career/user")
+        ResultActions actions = mockMvc.perform(post("/Career/user")
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/Career/user/6541"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value("123"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userName").value("Bruce Banner"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.accountType").value("Hulked"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("Scienc3Rul3$"));
+                        .content(objectMapper.writeValueAsString(userAccountInCareerRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("userName").value(is(userName)))
+                .andExpect(jsonPath("accountType").value(is(accountType)))
+                .andExpect(jsonPath("password").value(is(password)));
+
+        String responseBody = actions.andReturn().getResponse().getContentAsString();
+        UserAccountInCareerResponse response = mapper.readValue(responseBody, UserAccountInCareerResponse.class);
+        assertThat(response.getUserId()).isNotEmpty().as("The ID is populated");
     }
 
     @Test
     public void createUser_notValid_noUserCreated() throws Exception {
-        CareerCreateRequest request = new CareerCreateRequest();
-        request.setName("Peter Parker");
-        request.setAccountType("Regular");
-        request.setPassword("M@ryJ@n3");
+        UserAccountInCareerRequest userAccountInCareerRequest = new UserAccountInCareerRequest();
+        userAccountInCareerRequest.setUserName("Peter Parker");
+        userAccountInCareerRequest.setAccountType("Regular");
+        userAccountInCareerRequest.setPassword("M@ryJ@n3");
 
-        when(careerService.createUser(any(String.class), any(String.class), any(String.class)))
+        when(careerService.createUser(any(String.class), any(String.class), any(String.class), any(String.class)))
                 .thenThrow(new Exception("User account was not created."));
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/Career/user")
+        mockMvc.perform(post("/Career/user")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                        .content(objectMapper.writeValueAsString(userAccountInCareerRequest)))
+                .andExpect(status().isInternalServerError());
     }
 }
 

@@ -43,7 +43,7 @@ public class GetUserAccounts implements RequestHandler<APIGatewayProxyRequestEve
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent().withHeaders(headers);
 
-        String id = input.getPathParameters().get("id");
+        String id = input.getPathParameters().get("Id");
 
         if (id == null || id.length() == 0) {
             return response.withStatusCode(400).withBody("Id is invalid");
@@ -57,7 +57,7 @@ public class GetUserAccounts implements RequestHandler<APIGatewayProxyRequestEve
             QueryRequest queryRequest = new QueryRequest()
                     .withTableName("LambdaUserAccounts")
                     .withIndexName("IdIndex")
-                    .withKeyConditionExpression("id = :userId")
+                    .withKeyConditionExpression("Id = :userId")
                     .withExpressionAttributeValues(expressionAttributeValues);
 
             QueryResult queryResult = dynamoDB.query(queryRequest);

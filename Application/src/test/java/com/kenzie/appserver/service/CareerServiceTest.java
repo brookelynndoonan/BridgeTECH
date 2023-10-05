@@ -2,13 +2,9 @@ package com.kenzie.appserver.service;
 
 import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
+import com.kenzie.appserver.controller.model.UserAccountInCareerResponse;
 import com.kenzie.appserver.repositories.CareerRepository;
-import com.kenzie.appserver.repositories.ExampleRepository;
 import com.kenzie.appserver.repositories.model.CareerRecord;
-import com.kenzie.appserver.repositories.model.ExampleRecord;
-import com.kenzie.appserver.service.model.Career;
-import com.kenzie.appserver.service.model.Example;
-import com.kenzie.capstone.service.client.ApiGatewayException;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccounts;
 import com.kenzie.capstone.service.model.UserAccountsRequest;
@@ -18,9 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoAssertionError;
-import org.mockito.stubbing.Answer;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -266,10 +260,10 @@ public class CareerServiceTest {
         when(lambdaServiceClient.getUserAccounts("5464768")).thenReturn(fakeAccount);
 
         // THEN
-        CareerResponse careerResponse = careerService.getUsers("5464768");
+        UserAccountInCareerResponse userAccountsResponse = careerService.getUsers("5464768");
 
-        assertEquals("5464768", careerResponse.getUserId());
-        assertEquals("Pepper Potts", careerResponse.getUserName());
+        assertEquals("5464768", userAccountsResponse.getUserId());
+        assertEquals("Pepper Potts", userAccountsResponse.getUserName());
     }
 
     @Test
@@ -277,10 +271,10 @@ public class CareerServiceTest {
         // GIVEN/WHEN
         when(lambdaServiceClient.getUserAccounts(anyString())).thenReturn(null);
 
-        CareerResponse careerResponse = careerService.getUsers("452452");
+        UserAccountInCareerResponse userAccountsResponse = careerService.getUsers("452452");
 
         // THEN
-        assertNull(careerResponse);
+        assertNull(userAccountsResponse);
     }
 
     @Test
@@ -288,21 +282,21 @@ public class CareerServiceTest {
         // GIVEN
         UserAccountsResponse userAccountsResponse = new UserAccountsResponse();
         userAccountsResponse.setId("74654");
-        userAccountsResponse.setName("Remy LeBeau");
+        userAccountsResponse.setUserName("Remy LeBeau");
         userAccountsResponse.setAccountType("Card Magic");
         userAccountsResponse.setPassword("G@mb1t");
 
         // WHEN
         when(lambdaServiceClient.setUserAccounts(any(UserAccountsRequest.class))).thenReturn(userAccountsResponse);
 
-        CareerResponse careerResponse = careerService.createUser("Remy LeBeau", "Card Magic",
-                "G@mb1t");
+        UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser("Remy LeBeau", "Card Magic",
+                "G@mb1t", "561");
 
         // THEN
-        assertEquals("74654", careerResponse.getUserId());
-        assertEquals("Remy LeBeau", careerResponse.getUserName());
-        assertEquals("Card Magic", careerResponse.getAccountType());
-        assertEquals("G@mb1t", careerResponse.getPassword());
+        assertEquals("74654", userAccountsResponse.getId());
+        assertEquals("Remy LeBeau", userAccountsResponse.getUserName());
+        assertEquals("Card Magic", userAccountsResponse.getAccountType());
+        assertEquals("G@mb1t", userAccountsResponse.getPassword());
     }
 
     @Test
@@ -312,7 +306,7 @@ public class CareerServiceTest {
 
         // THEN
         assertThrows(Exception.class, () -> {
-            careerService.createUser("Dr. Jean Grey", "Professor", "Ph0en1xRul3z");
+            careerService.createUser("Dr. Jean Grey", "Professor", "Ph0en1xRul3z", "3615");
         });
     }
 

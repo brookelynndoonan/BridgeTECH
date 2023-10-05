@@ -20,7 +20,7 @@ public class UserAccountConvertor {
         UserAccountsResponse response = new UserAccountsResponse();
 
         response.setId(record.getId());
-        response.setName(record.getName());
+        response.setUserName(record.getName());
         response.setAccountType(record.getAccountType());
         response.setPassword(response.getPassword());
 

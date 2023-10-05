@@ -25,7 +25,8 @@ public class UserAccountRecord {
         this.email = email;
     }
 
-    @DynamoDBIndexHashKey(globalSecondaryIndexName = "IdIndex", attributeName = "id")
+    @DynamoDBAttribute(attributeName = "Id")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "IdIndex", attributeName = "Id")
     public String getId() {
         return id;
     }
@@ -34,7 +35,7 @@ public class UserAccountRecord {
         this.id = id;
     }
 
-    @DynamoDBAttribute(attributeName = "name")
+    @DynamoDBAttribute(attributeName = "userName")
     public String getName() {
         return name;
     }
@@ -43,7 +44,7 @@ public class UserAccountRecord {
         this.name = name;
     }
 
-    @DynamoDBAttribute(attributeName = "Account Type")
+    @DynamoDBAttribute(attributeName = "accountType")
     public String getAccountType() {
         return accountType;
     }
@@ -52,7 +53,7 @@ public class UserAccountRecord {
         this.accountType = accountType;
     }
 
-    @DynamoDBAttribute(attributeName = "Password")
+    @DynamoDBAttribute(attributeName = "password")
     public String getPassword() {
         return password;
     }
