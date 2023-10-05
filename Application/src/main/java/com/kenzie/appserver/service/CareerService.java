@@ -1,8 +1,6 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.controller.model.CareerCreateRequest;
-import com.kenzie.appserver.controller.model.CareerResponse;
-import com.kenzie.appserver.controller.model.UserAccountInCareerResponse;
+import com.kenzie.appserver.controller.model.*;
 import com.kenzie.appserver.repositories.UserAccountRepository;
 import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.repositories.CareerRepository;
@@ -117,21 +115,21 @@ public class CareerService {
         }
     }
 
-    public UserAccountInCareerResponse createUser(String userName, String accountType, String password, String userId) throws Exception {
+    public UserAccountInCareerResponse createUser(UserAccountInCareerRequest createUserRequest) {
 
         UserAccountRecord userAccountRecord = new UserAccountRecord();
-        userAccountRecord.setName(userName);
-        userAccountRecord.setId(userId);
-        userAccountRecord.setAccountType(accountType);
-        userAccountRecord.setPassword(password);
+        userAccountRecord.setName(createUserRequest.getUserName());
+        userAccountRecord.setId(createUserRequest.getUserId());
+        userAccountRecord.setAccountType(createUserRequest.getAccountType());
+        userAccountRecord.setPassword(createUserRequest.getPassword());
 
         userAccountRepository.save(userAccountRecord);
 
         UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
-        userAccountInCareerResponse.setUserId(userId);
-        userAccountInCareerResponse.setUserName(userName);
-        userAccountInCareerResponse.setAccountType(accountType);
-        userAccountInCareerResponse.setPassword(password);
+        userAccountInCareerResponse.setUserId(createUserRequest.getUserId());
+        userAccountInCareerResponse.setUserName(createUserRequest.getUserName());
+        userAccountInCareerResponse.setAccountType(createUserRequest.getAccountType());
+        userAccountInCareerResponse.setPassword(createUserRequest.getPassword());
 
         return userAccountInCareerResponse;
     }
