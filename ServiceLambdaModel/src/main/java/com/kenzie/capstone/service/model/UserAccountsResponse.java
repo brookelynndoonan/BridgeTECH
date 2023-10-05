@@ -1,15 +1,19 @@
 package com.kenzie.capstone.service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserAccountsResponse {
 
+    @JsonProperty("Id")
     private String id;
-    private String name;
+    @JsonProperty("userName")
+    private String userName;
     private String accountType;
     private String password;
 
-    public UserAccountsResponse(String id, String name, String accountType, String password) {
+    public UserAccountsResponse(String id, String userName, String accountType, String password) {
         this.id = id;
-        this.name = name;
+        this.userName = userName;
         this.accountType = accountType;
         this.password = password;
     }
@@ -25,12 +29,12 @@ public class UserAccountsResponse {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getAccountType() {
@@ -52,8 +56,8 @@ public class UserAccountsResponse {
     @Override
     public String toString() {
         return "UserAccountsResponse{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                "Id='" + id + '\'' +
+                ", name='" + userName + '\'' +
                 ", accountType='" + accountType + '\'' +
                 ", password='" + password + '\'' +
                 '}';

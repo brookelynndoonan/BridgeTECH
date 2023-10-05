@@ -69,9 +69,7 @@ public class LambdaService {
         record.setId(id);
         userAccountsDao.storeUserAccount(record);
 
-        UserAccountsResponse response = UserAccountConvertor.fromRecordToResponse(record);
-        return response;
-
+        return UserAccountConvertor.fromRecordToResponse(record);
 
     }
 }

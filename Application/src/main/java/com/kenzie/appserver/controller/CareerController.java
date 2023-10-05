@@ -2,19 +2,17 @@ package com.kenzie.appserver.controller;
 
 import com.kenzie.appserver.controller.model.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerResponse;
+import com.kenzie.appserver.controller.model.UserAccountInCareerRequest;
+import com.kenzie.appserver.controller.model.UserAccountInCareerResponse;
 import com.kenzie.appserver.repositories.CareerRepository;
-import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.service.CareerService;
-import com.kenzie.appserver.service.ExampleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
 
@@ -82,26 +80,27 @@ public class CareerController {
     }
 
     @GetMapping("/user/{Id}")
-    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable("Id") String userId) {
-        CareerResponse careerResponse = careerService.getUsers(userId);
+    public ResponseEntity<UserAccountInCareerResponse> getUserAccounts(@PathVariable("Id") String userId) {
+        UserAccountInCareerResponse userAccountInCareerResponse = careerService.getUsers(userId);
 
-        if (careerResponse == null) {
+        if (userAccountInCareerResponse == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(careerResponse);
+        return ResponseEntity.ok(userAccountInCareerResponse);
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<CareerResponse> createUser(@RequestBody CareerCreateRequest careerCreateRequest) {
+    @PostMapping("/userAccounts/user")
+    public ResponseEntity<UserAccountInCareerResponse> createUser(@RequestBody UserAccountInCareerRequest userAccountInCareerRequest) {
         try {
-            String name = careerCreateRequest.getName();
-            String accountType = careerCreateRequest.getAccountType();
-            String password = careerCreateRequest.getPassword();
+            String name = userAccountInCareerRequest.getUserName();
+            String accountType = userAccountInCareerRequest.getAccountType();
+            String password = userAccountInCareerRequest.getPassword();
+            String userId = randomUUID().toString();
 
-            CareerResponse careerResponse = careerService.createUser(name, accountType, password);
+            UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser(name, accountType, password, userId);
 
-            return ResponseEntity.created(URI.create("/Career/user/" + careerResponse.getUserId())).body(careerResponse);
+            return ResponseEntity.created(URI.create("/Career/user/")).body(userAccountInCareerResponse);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create user account", e);
         }

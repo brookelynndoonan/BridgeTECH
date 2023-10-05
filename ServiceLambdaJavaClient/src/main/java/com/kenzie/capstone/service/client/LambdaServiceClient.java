@@ -13,9 +13,9 @@ public class LambdaServiceClient {
     private static final String GET_EXAMPLE_ENDPOINT = "example/{id}";
     private static final String SET_EXAMPLE_ENDPOINT = "example";
 
-    private static final String SET_USERACCOUNT_ENDPOINT = "useraccount";
+    private static final String SET_USERACCOUNT_ENDPOINT = "user";
 
-    private static final String GET_USERACCOUNT_ENDPOINT = "useraccount/{id}";
+    private static final String GET_USERACCOUNT_ENDPOINT = "user/{Id}";
 
     private ObjectMapper mapper;
 
@@ -49,7 +49,7 @@ public class LambdaServiceClient {
 
     public UserAccounts getUserAccounts(String id) {
         EndpointUtility endpointUtility = new EndpointUtility();
-        String response = endpointUtility.getEndpoint(GET_USERACCOUNT_ENDPOINT.replace("{id}", id));
+        String response = endpointUtility.getEndpoint(SET_USERACCOUNT_ENDPOINT.replace("{Id}", id));
         UserAccounts userAccounts;
         try {
             userAccounts = mapper.readValue(response, UserAccounts.class);
@@ -68,7 +68,7 @@ public class LambdaServiceClient {
         } catch (JsonProcessingException e) {
             throw new ApiGatewayException("Unable to serialize request: " + e);
         }
-        String response = endpointUtility.postEndpoint(SET_EXAMPLE_ENDPOINT, request);
+        String response = endpointUtility.postEndpoint(SET_USERACCOUNT_ENDPOINT, request);
         UserAccountsResponse userAccounts;
         try {
             userAccounts = mapper.readValue(response, UserAccountsResponse.class);
