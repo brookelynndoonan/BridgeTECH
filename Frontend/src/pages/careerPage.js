@@ -25,7 +25,8 @@ class CareerPage extends BaseClass{
         this.dataStore.set("Career", null);
 
         let careerId = this.dataStore.get('Id')
-        let jobName = document.getElementById("job-name-title").value;
+        let jobNameTitle = document.getElementById("job-name-title").value;
+        let jobName = document.c
 
 
     }
@@ -36,17 +37,13 @@ class CareerPage extends BaseClass{
 
         //id,name, company description, job description
         console.log(career);
-            resultArea.innerHTML =
+            resultArea.innerHTML = `
                 <div id="career-lists">
                 <div >Id: ${career.id}</div>
                 <div >Name: ${name}</div>
-                {/*<div >Company: ${career.companyDescription}</div>*/}
-                {/*<div>Job: ${career.jobDescription}</div>*/}
+                
                 </div>
-
-
-
-
+                `
 
 
         // if(career){
