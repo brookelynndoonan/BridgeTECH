@@ -98,7 +98,7 @@ public class CareerController {
             String password = userAccountInCareerRequest.getPassword();
             String userId = randomUUID().toString();
 
-            UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser(name, accountType, password, userId);
+            UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser(userAccountInCareerRequest);
 
             return ResponseEntity.created(URI.create("/Career/user/")).body(userAccountInCareerResponse);
         } catch (Exception e) {
