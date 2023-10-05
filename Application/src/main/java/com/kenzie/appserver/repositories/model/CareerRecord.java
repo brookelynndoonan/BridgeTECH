@@ -16,7 +16,7 @@ public class CareerRecord {
     private String jobDescription;
     private String companyDescription;
 
-    @DynamoDBHashKey(attributeName = "id")
+    @DynamoDBHashKey(attributeName = "Id")
     public String getId() {
         return id;
     }
@@ -31,12 +31,12 @@ public class CareerRecord {
         return location;
     }
 
-    @DynamoDBAttribute(attributeName = "jobdescription")
+    @DynamoDBAttribute(attributeName = "jobDescription")
     public String getJobDescription() {
         return jobDescription;
     }
 
-    @DynamoDBAttribute(attributeName = "companydescription")
+    @DynamoDBAttribute(attributeName = "companyDescription")
     public String getCompanyDescription() {
         return companyDescription;
     }

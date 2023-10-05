@@ -81,8 +81,8 @@ public class CareerController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable("id") String userId) {
+    @GetMapping("/user/{Id}")
+    public ResponseEntity<CareerResponse> getUserAccounts(@PathVariable("Id") String userId) {
         CareerResponse careerResponse = careerService.getUsers(userId);
 
         if (careerResponse == null) {

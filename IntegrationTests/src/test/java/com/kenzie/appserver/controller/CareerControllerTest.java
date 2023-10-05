@@ -75,7 +75,7 @@ public class CareerControllerTest {
                         .content(requestJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is("654654")))
+                .andExpect(jsonPath("$.Id", is("654654")))
                 .andExpect(jsonPath("$.name", is(request.getName())))
 
                 //These are not passing. Trying to figure out why. Otherwise, test passes without them.
@@ -94,7 +94,7 @@ public class CareerControllerTest {
 
         when(careerService.getUsers(anyString())).thenReturn(expectedResponse);
 
-        mockMvc.perform(get("/Career/user/{id}", "65412")
+        mockMvc.perform(get("/Career/user/{Id}", "65412")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("userId").value("65412"))
                 .andExpect(status().is2xxSuccessful());
@@ -105,9 +105,9 @@ public class CareerControllerTest {
     public void createUser_isValid_successful() throws Exception {
 
         CareerCreateRequest request = new CareerCreateRequest();
-        request.setName("John Doe");
-        request.setAccountType("Standard");
-        request.setPassword("password123");
+        request.setName("Bruce Banner");
+        request.setAccountType("Hulked");
+        request.setPassword("Scienc3Rul3$");
 
         CareerResponse expectedResponse = new CareerResponse();
         expectedResponse.setUserId("6541");

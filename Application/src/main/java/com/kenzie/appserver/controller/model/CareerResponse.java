@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CareerResponse {
 
-    @JsonProperty("id")
+    @JsonProperty("Id")
     private String id;
 
     @JsonProperty("name")
@@ -15,21 +15,21 @@ public class CareerResponse {
     @JsonProperty("location")
     private String location;
 
-    @JsonProperty("jobdescription")
+    @JsonProperty("jobDescription")
     private String jobDescription;
 
-    @JsonProperty("companydescription")
+    @JsonProperty("companyDescription")
     private String companyDescription;
 
-    @JsonProperty("username")
+    @JsonProperty("userName")
     private String userName;
 
-    @JsonProperty("userid")
+    @JsonProperty("userId")
     private String userId;
     @JsonProperty("password")
     private String password;
 
-    @JsonProperty("accounttype")
+    @JsonProperty("accountType")
 
     private String accountType;
 
