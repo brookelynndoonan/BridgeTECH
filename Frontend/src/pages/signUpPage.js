@@ -11,42 +11,36 @@ class SignUpPage extends BaseClass {
         this.dataStore = new DataStore();
     }
 
-    async mount(){
+    async mount() {
         document.getElementById('signUp-form').addEventListener('submit', this.onCreate);
         this.client = new ExampleClient();
-
-        // this.dataStore.addChangeListener(this.renderSignUp)
     }
 
 
-    async onCreate(event){
+    async onCreate(event) {
         event.preventDefault();
         this.dataStore.set("user", null);
 
-        let firstName = document.getElementById("firstName").value;
+        let name = document.getElementById("name").value;
         let lastName = document.getElementById("lastname").value;
         let email = document.getElementById("email").value;
-        let password = document.getElementById("psw").value;
-        let pathCategory = document.getElementById("path-category").value;
+        let password = document.getElementById("password").value;
+        let accountType = document.getElementById("accountType").value;
 
-        const  createdUser = await this.client.createUserAccount(firstName, lastName, email, password , pathCategory, this.errorHandler);
+        const createdUser = await this.client.createUserAccount(name, lastName, email, password, accountType, this.errorHandler);
         this.dataStore.set("user", createdUser);
 
-        if (createdUser){
+        if (createdUser) {
             this.showMessage(`Created ${createdUser.name}!`)
         } else {
             this.errorHandler("Error creating!  Try again...")
         }
     }
-
-    // async onDelete(event){
-    //
-    // }
 }
 
 const main = async () => {
-    const  signUpPage = new SignUpPage();
-    await signUpPage.mount();
+    const signUpPage = new SignUpPage();
+    signUpPage.mount();
 };
 
 window.addEventListener('DOMContentLoaded', main);
