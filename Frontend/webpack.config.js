@@ -8,7 +8,6 @@ module.exports = {
     usedExports: true
   },
   entry: {
-    examplePage: path.resolve(__dirname, 'src', 'pages', 'examplePage.js'),
     loginPage: path.resolve(__dirname, 'src', 'pages', 'loginPage.js'),
     signUpPage: path.resolve(__dirname, 'src', 'pages', 'signUpPage.js'),
     careerPage: path.resolve(__dirname, 'src', 'pages', 'careerPage.js'),
@@ -24,17 +23,12 @@ module.exports = {
     open: true,
     proxy: [
       {
-        context: ['/example','/Career','/Company','/Industry'],
+        context: ['/Career','/Company','/Industry'],
         target: 'http://localhost:5001'
       }
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: './src/index.html',
-      filename: 'index.html',
-      inject: false
-    }),
     new HtmlWebpackPlugin({
       template: './src/homePage.html',
       filename: 'homePage.html',
