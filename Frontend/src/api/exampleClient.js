@@ -33,14 +33,9 @@ export default class ExampleClient extends BaseClass {
 
     // Career controller --------------------------------------------------------------------------------------------------
 
-    async getAllCareers(id, name, location, jobDescription, companyDescription, errorCallback) {
+    async getAllCareers( errorCallback) {
         try {
-            const response = await this.client.get(`/Career/`, {
-                "name": name,
-                "location": location,
-                "jobDescription": jobDescription,
-                "companyDescription": companyDescription
-            });
+            const response = await this.client.get(`/Career/`);
             return response.data;
         } catch (error) {
             this.handleError("getAllCareers", error, errorCallback);
