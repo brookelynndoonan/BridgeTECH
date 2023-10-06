@@ -6,31 +6,31 @@ class CareerPage extends BaseClass {
 
     constructor() {
         super();
-        this.bindClassMethods(['onGet', 'onCreate', 'renderCareer'], this);
+        this.bindClassMethods(['renderCareer'], this);
         this.dataStore = new DataStore();
         this.client = new ExampleClient();
     }
 
     async mount() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const careerId = urlParams.get('Id');
-        const career = await this.client.getAllCareers(careerId, this.errorHandler);
-        this.dataStore.set(career);
-        this.dataStore.set("career", careerId);
+        // const urlParams = new URLSearchParams(window.location.search);
+        // const careerId = urlParams.get('Id');
+        // const career = await this.client.getAllCareers(careerId, this.errorHandler);
+        // this.dataStore.set(career);
+        // this.dataStore.set("career", careerId);
         await this.renderCareer();
     }
 
-    async onCreate(event) {
-        //create a job Post
-        event.preventDefault();
-        this.dataStore.set("Career", null);
-
-        let careerId = this.dataStore.get('Id')
-        let jobNameTitle = document.getElementById("job-name-title").value;
-        let jobName = document.c
-
-
-    }
+    // async onCreate(event) {
+    //     //create a job Post
+    //     event.preventDefault();
+    //     this.dataStore.set("Career", null);
+    //
+    //     let careerId = this.dataStore.get('Id')
+    //     let jobNameTitle = document.getElementById("job-name-title").value;
+    //     let jobName = document.c
+    //
+    //
+    // }
 
     async renderCareer() {
         let resultArea = document.getElementById('job-posting-container');
@@ -41,16 +41,16 @@ class CareerPage extends BaseClass {
             resultArea.innerHTML = careers
                 .map(
                     (career) => `
-                    <div class="job-postings-container">
+                    <p class="job-postings-container">
                         <ul class="job-listings">
                             <li class="individual-job-post">
                                 <div>Id: ${career.id}</div>
                                 <div><h4>Name: ${career.name}</h4></div>
-                                <div>Company: ${career.companyDescription}</div>
-                                <div>Job Description: ${career.jobDescription}</div>
+                                <div>Company: ${career.companydescription}</div>
+                                <div>Job Description: ${career.jobdescription}</div>
                             </li>
                         </ul>
-                    </div>
+                    </p>
                 `
                 )
                 .join("");
