@@ -3,37 +3,27 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: "id"
+        - AttributeName: "Id"
           AttributeType: "S"
         - AttributeName: "email"
           AttributeType: "S"
       KeySchema:
-        - AttributeName: "id"
+        - AttributeName: "email"
           KeyType: "HASH"
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       TableName: "LambdaUserAccounts"
       GlobalSecondaryIndexes:
-        - IndexName: "IdIndex"  # Define GSI for "id" attribute
+        - IndexName: "IdIndex"  # Define GSI for "Id" attribute
           KeySchema:
-            - AttributeName: "id"
+            - AttributeName: "Id"
               KeyType: "HASH"
           Projection:
             ProjectionType: "ALL"
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
-        - IndexName: "EmailIndex"  # Define GSI for "email" attribute
-          KeySchema:
-            - AttributeName: "email"
-              KeyType: "HASH"
-          Projection:
-            ProjectionType: "ALL"
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
-
 
             #Resources:
             #  UserTable:

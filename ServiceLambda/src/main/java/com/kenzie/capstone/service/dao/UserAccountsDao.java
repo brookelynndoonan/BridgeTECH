@@ -25,7 +25,7 @@ public class UserAccountsDao {
         try {
             mapper.save(account, new DynamoDBSaveExpression()
                     .withExpected(ImmutableMap.of(
-                            "id",
+                            "Id",
                             new ExpectedAttributeValue().withExists(false)
                     )));
         } catch (ConditionalCheckFailedException e) {
