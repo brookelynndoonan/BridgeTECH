@@ -93,14 +93,10 @@ public class CareerController {
     @PostMapping("/userAccounts/user")
     public ResponseEntity<UserAccountInCareerResponse> createUser(@RequestBody UserAccountInCareerRequest userAccountInCareerRequest) {
         try {
-            String name = userAccountInCareerRequest.getUserName();
-            String accountType = userAccountInCareerRequest.getAccountType();
-            String password = userAccountInCareerRequest.getPassword();
-            String userId = randomUUID().toString();
 
             UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser(userAccountInCareerRequest);
 
-            return ResponseEntity.created(URI.create("/Career/user/")).body(userAccountInCareerResponse);
+            return ResponseEntity.created(URI.create("/Career/userAccounts/user/")).body(userAccountInCareerResponse);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create user account", e);
         }

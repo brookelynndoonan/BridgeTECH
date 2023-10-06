@@ -7,7 +7,7 @@ public class UserAccountInCareerResponse {
     @JsonProperty("userName")
     private String userName;
 
-    @JsonProperty("Id")
+    @JsonProperty("userId")
     private String userId;
     @JsonProperty("password")
     private String password;
@@ -15,6 +15,8 @@ public class UserAccountInCareerResponse {
     @JsonProperty("accountType")
 
     private String accountType;
+    @JsonProperty("email")
+    private String email;
 
     public String getUserName() {
         return userName;
@@ -46,5 +48,13 @@ public class UserAccountInCareerResponse {
 
     public void setAccountType(String accountType) {
         this.accountType = accountType;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
