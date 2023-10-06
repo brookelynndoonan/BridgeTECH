@@ -122,14 +122,18 @@ public class CareerService {
         userAccountRecord.setId(createUserRequest.getUserId());
         userAccountRecord.setAccountType(createUserRequest.getAccountType());
         userAccountRecord.setPassword(createUserRequest.getPassword());
+        userAccountRecord.setEmail(createUserRequest.getEmail());
+
 
         userAccountRepository.save(userAccountRecord);
+        //careerRepository.save(userAccountRecord);
 
         UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
         userAccountInCareerResponse.setUserId(createUserRequest.getUserId());
         userAccountInCareerResponse.setUserName(createUserRequest.getUserName());
         userAccountInCareerResponse.setAccountType(createUserRequest.getAccountType());
         userAccountInCareerResponse.setPassword(createUserRequest.getPassword());
+        userAccountInCareerResponse.setEmail(createUserRequest.getEmail());
 
         return userAccountInCareerResponse;
     }

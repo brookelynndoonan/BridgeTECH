@@ -9,9 +9,10 @@ public class UserAccountConvertor {
     public static UserAccountRecord fromRequestToRecord(UserAccountsRequest request) {
         UserAccountRecord record = new UserAccountRecord();
 
-        record.setName(request.getName());
+        record.setName(request.getUserName());
         record.setAccountType(request.getAccountType());
         record.setPassword(request.getPassword());
+        record.setEmail(request.getEmail());
 
         return record;
     }
@@ -22,7 +23,8 @@ public class UserAccountConvertor {
         response.setId(record.getId());
         response.setUserName(record.getName());
         response.setAccountType(record.getAccountType());
-        response.setPassword(response.getPassword());
+        response.setPassword(record.getPassword());
+        response.setEmail(record.getEmail());
 
         return response;
     }

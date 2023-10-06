@@ -9,13 +9,18 @@ import com.kenzie.appserver.controller.model.CareerResponse;
 
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequest;
 import com.kenzie.appserver.controller.model.UserAccountInCareerResponse;
+import com.kenzie.appserver.repositories.UserAccountRepository;
 import com.kenzie.appserver.service.CareerService;
 import net.andreinc.mockneat.MockNeat;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -25,6 +30,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.OPTIONAL;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -47,6 +53,8 @@ public class CareerControllerTest {
 
     @MockBean
     private CareerService careerService;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     private static final MockNeat mockNeat = MockNeat.threadLocal();
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -82,12 +90,8 @@ public class CareerControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.Id", is("654654")))
                 .andExpect(jsonPath("$.name", is(request.getName())))
-
-                //These are not passing. Trying to figure out why. Otherwise, test passes without them.
-                //These are also what is needed in the methods Megan was talking about.
-
-                //.andExpect(jsonPath("$.jobDescription", is(request.getJobDescription())))
-                //.andExpect(jsonPath("$.companyDescription", is(request.getCompanyDescription())))
+                .andExpect(jsonPath("$.jobDescription", is(request.getJobDescription())))
+                .andExpect(jsonPath("$.companyDescription", is(request.getCompanyDescription())))
                 .andDo(print());
 
     }
@@ -111,15 +115,16 @@ public class CareerControllerTest {
         String password = "Scienc3Rul3$";
         String accountType = "Hulked";
         String userId = "usldkfj24";
+        String email = "b.banner@StarkIndustries.com";
 
         UserAccountInCareerRequest userAccountInCareerRequest = new UserAccountInCareerRequest();
         userAccountInCareerRequest.setUserName(userName);
         userAccountInCareerRequest.setAccountType(accountType);
         userAccountInCareerRequest.setPassword(password);
         userAccountInCareerRequest.setUserId(userId);
+        userAccountInCareerRequest.setEmail(email);
 
-        UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser(userAccountInCareerRequest);
-
+        careerService.createUser(userAccountInCareerRequest);
 
 
         mapper.registerModule(new JavaTimeModule());
@@ -128,15 +133,20 @@ public class CareerControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userAccountInCareerRequest)))
-                .andExpect(status().is2xxSuccessful());
-              /*  .andExpect(jsonPath("userName").value(is(userName)))
-                .andExpect(jsonPath("accountType").value(is(accountType)))
-                .andExpect(jsonPath("password").value(is(password)));*/
+                .andExpect(jsonPath("email")
+                        .value(is(email)))
+                .andExpect(jsonPath("userName")
+                        .value(is(userName)))
+                .andExpect(jsonPath("accountType")
+                        .value(is(accountType)))
+                .andExpect(jsonPath("password")
+                        .value(is(password)));
 
         String responseBody = actions.andReturn().getResponse().getContentAsString();
         UserAccountInCareerResponse response = mapper.readValue(responseBody, UserAccountInCareerResponse.class);
         assertThat(response.getUserId()).isNotEmpty().as("The ID is populated");
     }
+
 
     @Test
     public void createUser_notValid_noUserCreated() throws Exception {

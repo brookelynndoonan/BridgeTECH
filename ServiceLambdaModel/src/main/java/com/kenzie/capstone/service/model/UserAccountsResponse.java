@@ -10,12 +10,14 @@ public class UserAccountsResponse {
     private String userName;
     private String accountType;
     private String password;
+    private String email;
 
-    public UserAccountsResponse(String id, String userName, String accountType, String password) {
+    public UserAccountsResponse(String id, String userName, String accountType, String password, String email) {
         this.id = id;
         this.userName = userName;
         this.accountType = accountType;
         this.password = password;
+        this.email = email;
     }
 
     public UserAccountsResponse() {
@@ -53,13 +55,22 @@ public class UserAccountsResponse {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "UserAccountsResponse{" +
-                "Id='" + id + '\'' +
-                ", name='" + userName + '\'' +
+                "id='" + id + '\'' +
+                ", userName='" + userName + '\'' +
                 ", accountType='" + accountType + '\'' +
                 ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

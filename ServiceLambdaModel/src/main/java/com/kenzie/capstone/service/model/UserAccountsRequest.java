@@ -9,33 +9,30 @@ public class UserAccountsRequest {
     private String password;
     @JsonProperty("Id")
     private String userId;
+    private String email;
 
-    public UserAccountsRequest(String userName, String accountType, String password, String userId) {
+    public UserAccountsRequest(String userName, String accountType, String password, String userId, String email) {
 
         this.userName = userName;
         this.accountType = accountType;
         this.password = password;
         this.userId = userId;
+        this.email = email;
     }
 
     public UserAccountsRequest() {
     }
 
-
-    public String getName() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setName(String name) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
     public String getAccountType() {
         return accountType;
-    }
-
-    public String getUserId() {
-        return userId;
     }
 
     public void setAccountType(String accountType) {
@@ -50,17 +47,30 @@ public class UserAccountsRequest {
         this.password = password;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public String toString() {
         return "UserAccountsRequest{" +
-                "name='" + userName + '\'' +
+                "userName='" + userName + '\'' +
                 ", accountType='" + accountType + '\'' +
                 ", password='" + password + '\'' +
                 ", userId='" + userId + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
