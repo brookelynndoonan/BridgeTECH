@@ -57,7 +57,7 @@ class CareerPage extends BaseClass {
         } else {
             resultArea.innerHTML = "No careers available.";
         }
-        resultArea.appendChild(careers);
+        // resultArea.appendChild(careers);
     }
 
     // onDelete(){
