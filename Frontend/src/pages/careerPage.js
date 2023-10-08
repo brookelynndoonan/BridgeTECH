@@ -55,9 +55,9 @@ class CareerPage extends BaseClass {
                 )
                 .join("");
         } else {
-            resultArea.innerHTML = "No careers available.";
+            resultArea.innerHTML = "No Industry information available.";
         }
-        resultArea.appendChild(careers);
+        // resultArea.appendChild(careers);
     }
 
     // onDelete(){

@@ -20,7 +20,7 @@ module.exports = {
   devServer: {
     https: false,
     port: 8080,
-    open: true,
+    open: "homePage.html",
     proxy: [
       {
         context: ['/Career','/Company','/Industry'],
