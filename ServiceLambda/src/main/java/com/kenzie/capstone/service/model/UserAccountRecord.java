@@ -64,18 +64,14 @@ public class UserAccountRecord {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof UserAccountRecord)) return false;
         UserAccountRecord that = (UserAccountRecord) o;
-        return id.equals(that.id);
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getName(), that.getName()) && Objects.equals(getAccountType(), that.getAccountType()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getEmail(), that.getEmail());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId(), getName(), getAccountType(), getPassword(), getEmail());
     }
 }

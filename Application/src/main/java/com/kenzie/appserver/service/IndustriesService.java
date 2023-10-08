@@ -1,7 +1,7 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.controller.model.IndustryRequest;
-import com.kenzie.appserver.controller.model.IndustryResponse;
+import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryRequest;
+import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryResponse;
 import com.kenzie.appserver.repositories.IndustryRepository;
 import com.kenzie.appserver.repositories.model.IndustriesRecord;
 import org.springframework.http.HttpStatus;

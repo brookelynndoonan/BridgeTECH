@@ -1,7 +1,7 @@
 package com.kenzie.appserver.controller;
 
 import com.kenzie.appserver.IntegrationTest;
-import com.kenzie.appserver.controller.model.ExampleCreateRequest;
+import com.kenzie.appserver.controller.model.ExampleRequestResponse.ExampleCreateRequest;
 import com.kenzie.appserver.service.ExampleService;
 import com.kenzie.appserver.service.model.Example;
 

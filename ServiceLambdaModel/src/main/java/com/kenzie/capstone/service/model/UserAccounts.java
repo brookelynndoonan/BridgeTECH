@@ -4,26 +4,27 @@ import java.util.Objects;
 
 public class UserAccounts {
 
-    private String id;
+    private String Id;
     private String name;
     private String accountType;
     private String password;
+    private String email;
 
-    public UserAccounts (String id, String name, String accountType, String password){
-        this.id = id;
+    public UserAccounts (String Id, String name, String accountType, String password
+            , String email){
+        this.Id = Id;
         this.name = name;
         this.accountType = accountType;
         this.password = password;
+        this.email = email;
     }
 
-    public UserAccounts(){}
-
     public String getId() {
-        return id;
+        return Id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        Id = id;
     }
 
     public String getName() {
@@ -50,16 +51,24 @@ public class UserAccounts {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof UserAccounts)) return false;
         UserAccounts that = (UserAccounts) o;
-        return id.equals(that.id);
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getName(), that.getName()) && Objects.equals(getAccountType(), that.getAccountType()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getEmail(), that.getEmail());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId(), getName(), getAccountType(), getPassword(), getEmail());
     }
 }

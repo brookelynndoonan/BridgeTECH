@@ -1,20 +1,35 @@
-package com.kenzie.appserver.controller.model;
+package com.kenzie.appserver.controller.model.CareerRequestResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.validation.constraints.NotEmpty;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CareerResponse {
 
-public class CareerCreateRequest {
+    @JsonProperty("Id")
+    private String Id;
 
-    @NotEmpty
     @JsonProperty("name")
     private String name;
-    @JsonProperty("Id")
-    private String id;
+
+    @JsonProperty("location")
     private String location;
+
+    @JsonProperty("jobDescription")
     private String jobDescription;
+
+    @JsonProperty("companyDescription")
     private String companyDescription;
 
+
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String Id) {
+        this.Id = Id;
+    }
 
     public String getName() {
         return name;
@@ -22,14 +37,6 @@ public class CareerCreateRequest {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getLocation() {

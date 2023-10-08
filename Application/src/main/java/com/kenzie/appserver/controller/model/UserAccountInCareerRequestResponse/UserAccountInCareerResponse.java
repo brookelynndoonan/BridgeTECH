@@ -1,28 +1,21 @@
-package com.kenzie.appserver.controller.model;
+package com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotEmpty;
-
-public class UserAccountInCareerRequest {
-    @NotEmpty
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserAccountInCareerResponse {
     @JsonProperty("userName")
     private String userName;
 
-    @NotEmpty
-    @JsonProperty("Id")
+    @JsonProperty("userId")
     private String userId;
-
-    @NotEmpty
     @JsonProperty("password")
     private String password;
 
-    @NotEmpty
     @JsonProperty("accountType")
 
     private String accountType;
-    @NotEmpty
-    @JsonProperty
+    @JsonProperty("email")
     private String email;
 
     public String getUserName() {

@@ -1,20 +1,21 @@
 package com.kenzie.appserver.controller;
 
-import com.kenzie.appserver.controller.model.CareerCreateRequest;
-import com.kenzie.appserver.controller.model.CareerResponse;
-import com.kenzie.appserver.controller.model.UserAccountInCareerRequest;
-import com.kenzie.appserver.controller.model.UserAccountInCareerResponse;
+import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
+import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
+import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
+import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerResponse;
 import com.kenzie.appserver.repositories.CareerRepository;
 import com.kenzie.appserver.service.CareerService;
+import com.kenzie.appserver.service.model.Career;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.UUID.randomUUID;
 
 @RestController
 @RequestMapping("/Career")
@@ -43,32 +44,45 @@ public class CareerController {
     }
 
 
-    @PostMapping("/{Id}")
-    public ResponseEntity<CareerResponse> updateCareer(@PathVariable("Id") String id,
-                                                       @RequestBody CareerCreateRequest careerCreateRequest) {
-        CareerResponse response = careerService.updateCareer(careerCreateRequest.getName(), id,
-                careerCreateRequest.getLocation(), careerCreateRequest.getCompanyDescription(),
-                careerCreateRequest.getJobDescription());
+    @PutMapping
+    public ResponseEntity<CareerResponse> updateCareer(@RequestBody CareerCreateRequest careerCreateRequest) {
+        Career career = new Career(careerCreateRequest.getId(),
+                careerCreateRequest.getName(),
+                careerCreateRequest.getLocation(),
+                careerCreateRequest.getJobDescription(),
+                careerCreateRequest.getCompanyDescription());
+        careerService.updateCareer(career);
 
-        return ResponseEntity.ok(response);
+        CareerResponse careerResponse = createCareerResponse(career);
+
+        return ResponseEntity.ok(careerResponse);
     }
 
     @GetMapping
     public ResponseEntity<List<CareerResponse>> getAllCareers() {
-        List<CareerResponse> careers = careerService.findAllCareers();
-        if (careers == null || careers.isEmpty()) {
+        List<Career> career  = careerService.findAllCareers();
+
+        if (career == null ||  career.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(careers);
+        List<CareerResponse> response = new ArrayList<>();
+        for (Career careers : career) {
+            response.add(this.createCareerResponse(careers));
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{Id}")
-    public ResponseEntity<CareerResponse> searchCareerById(@PathVariable("Id") String careerId) {
-        CareerResponse careerResponse = careerService.findCareerById(careerId);
-        if (careerResponse == null) {
+    public ResponseEntity<CareerResponse> searchCareerById(@PathVariable String Id) {
+        Career career = careerService.findCareerById(Id);
+
+        if (career == null) {
             return ResponseEntity.notFound().build();
         }
+
+        CareerResponse careerResponse = createCareerResponse(career);
         return ResponseEntity.ok(careerResponse);
     }
 
@@ -79,9 +93,9 @@ public class CareerController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/user/{Id}")
-    public ResponseEntity<UserAccountInCareerResponse> getUserAccounts(@PathVariable("Id") String userId) {
-        UserAccountInCareerResponse userAccountInCareerResponse = careerService.getUsers(userId);
+    @GetMapping("/userAccounts/user/{Id}")
+    public ResponseEntity<UserAccountInCareerResponse> getUserAccounts(@PathVariable("Id") String Id) {
+        UserAccountInCareerResponse userAccountInCareerResponse = careerService.getUsers(Id);
 
         if (userAccountInCareerResponse == null) {
             return ResponseEntity.notFound().build();
@@ -93,13 +107,24 @@ public class CareerController {
     @PostMapping("/userAccounts/user")
     public ResponseEntity<UserAccountInCareerResponse> createUser(@RequestBody UserAccountInCareerRequest userAccountInCareerRequest) {
         try {
-
             UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser(userAccountInCareerRequest);
 
-            return ResponseEntity.created(URI.create("/Career/userAccounts/user/")).body(userAccountInCareerResponse);
+            URI location = URI.create("/Career/userAccounts/user/" + userAccountInCareerResponse.getUserId());
+            return ResponseEntity.created(location).body(userAccountInCareerResponse);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create user account", e);
         }
+    }
+
+
+    private CareerResponse createCareerResponse(Career career) {
+        CareerResponse careerResponse = new CareerResponse();
+        careerResponse.setId(career.getId());
+        careerResponse.setLocation(career.getLocation());
+        careerResponse.setName(career.getCareerName());
+        careerResponse.setJobDescription(career.getJobDescription());
+        careerResponse.setCompanyDescription(career.getCompanyDescription());
+        return careerResponse;
     }
 
 }

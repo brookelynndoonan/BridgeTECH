@@ -1,47 +1,65 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.controller.model.*;
+import com.kenzie.appserver.config.CacheStore;
+import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
+import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
+import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
+import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerResponse;
 import com.kenzie.appserver.repositories.UserAccountRepository;
 import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.repositories.CareerRepository;
 
+import com.kenzie.appserver.service.model.Career;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccountRecord;
 import com.kenzie.capstone.service.model.UserAccounts;
 import com.kenzie.capstone.service.model.UserAccountsRequest;
-import com.kenzie.capstone.service.model.UserAccountsResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class CareerService {
-    private CareerRepository careerRepository;
-    private UserAccountRepository userAccountRepository;
-    private LambdaServiceClient lambdaServiceClient;
+    private final CacheStore cache;
+    private final CareerRepository careerRepository;
+    private final UserAccountRepository userAccountRepository;
+    private final LambdaServiceClient lambdaServiceClient;
 
-    public CareerService(CareerRepository careerRepository, LambdaServiceClient lambdaServiceClient) {
+    @Autowired
+    public CareerService(
+            CareerRepository careerRepository,
+            UserAccountRepository userAccountRepository,
+            LambdaServiceClient lambdaServiceClient,
+            CacheStore cache
+    ) {
+        this.cache = cache;
         this.careerRepository = careerRepository;
+        this.userAccountRepository = userAccountRepository;
         this.lambdaServiceClient = lambdaServiceClient;
     }
 
-    public List<CareerResponse> findAllCareers() {
+    public List<Career> findAllCareers() {
+        List<Career> careers = new ArrayList<>();
 
-        List<CareerRecord> recordList = StreamSupport.stream(careerRepository.findAll().spliterator(),
-                true).collect(Collectors.toList());
+        Iterable<CareerRecord> careerIterator = careerRepository.findAll();
+        for(CareerRecord record : careerIterator) {
+            careers.add(new Career(record.getId(),
+                    record.getCareerName(),
+                    record.getLocation(),
+                    record.getJobDescription(),
+                    record.getCompanyDescription()));
+        }
 
-        return recordList.stream()
-                .map(this::createCareerResponseFromRecord)
-                .collect(Collectors.toList());
+        return careers;
     }
 
-    public CareerResponse findCareerById(String id) {
+  /*  public CareerResponse findCareerById(String id) {
 
         CareerResponse careerInfo = careerRepository
                 .findById(id)
@@ -49,6 +67,28 @@ public class CareerService {
                 .orElse(null);
 
         return careerInfo;
+    }*/
+
+    public Career findCareerById(String Id) {
+        Career cachedCareer = cache.get(Id);
+        if (cachedCareer != null) {
+            return cachedCareer;
+        }
+        Career careerFromBackendService = careerRepository
+                .findById(Id)
+                .map(career -> new Career(career.getId(),
+                        career.getCareerName(),
+                        career.getJobDescription(),
+                        career.getLocation(),
+                        career.getCompanyDescription()))
+                .orElse(null);
+
+        // if concert found, cache it
+        if (careerFromBackendService != null) {
+            cache.add(careerFromBackendService.getId(), careerFromBackendService);
+        }
+        // return concert
+        return careerFromBackendService;
     }
 
     public CareerResponse addNewCareer(CareerCreateRequest careerCreateRequest) {
@@ -62,25 +102,17 @@ public class CareerService {
 
     }
 
-    public CareerResponse updateCareer(String id, String name, String location, String jobDescription, String companyDescription) {
-
-        Optional<CareerRecord> careerExist = careerRepository.findById(id);
-
-        if (careerExist.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Career Not Found");
+    public void updateCareer(Career career) {
+        if (careerRepository.existsById(career.getId())) {
+            CareerRecord careerRecord = new CareerRecord();
+            careerRecord.setId(career.getId());
+            careerRecord.setCareerName(career.getCareerName());
+            careerRecord.setLocation(career.getLocation());
+            careerRecord.setJobDescription(career.getJobDescription());
+            careerRecord.setCompanyDescription(career.getCompanyDescription());
+            careerRepository.save(careerRecord);
+            cache.evict(careerRecord.getId());
         }
-
-        CareerRecord record = careerExist.get();
-
-        record.setCareerName(name);
-        record.setLocation(location);
-        record.setJobDescription(jobDescription);
-        record.setCompanyDescription(companyDescription);
-
-        careerRepository.save(record);
-
-        return createCareerResponseFromRecord(record);
-
     }
 
 
@@ -92,6 +124,7 @@ public class CareerService {
 
             if (careerRecord.getId().equals(userId)) {
                 careerRepository.deleteById(id);
+                cache.evict(id);
             } else {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                         "You are not authorized to delete this career");
@@ -108,35 +141,42 @@ public class CareerService {
             UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
             userAccountInCareerResponse.setUserId(users.getId());
             userAccountInCareerResponse.setUserName(users.getName());
+            userAccountInCareerResponse.setEmail(users.getEmail());
 
             return userAccountInCareerResponse;
         } else {
             return null;
         }
     }
+  public UserAccountInCareerResponse createUser(UserAccountInCareerRequest createUserRequest) {
 
-    public UserAccountInCareerResponse createUser(UserAccountInCareerRequest createUserRequest) {
+      UserAccountRecord userAccountRecord = new UserAccountRecord();
+      userAccountRecord.setName(createUserRequest.getUserName());
+      userAccountRecord.setId(createUserRequest.getUserId());
+      userAccountRecord.setAccountType(createUserRequest.getAccountType());
+      userAccountRecord.setPassword(createUserRequest.getPassword());
+      userAccountRecord.setEmail(createUserRequest.getEmail());
 
-        UserAccountRecord userAccountRecord = new UserAccountRecord();
-        userAccountRecord.setName(createUserRequest.getUserName());
-        userAccountRecord.setId(createUserRequest.getUserId());
-        userAccountRecord.setAccountType(createUserRequest.getAccountType());
-        userAccountRecord.setPassword(createUserRequest.getPassword());
-        userAccountRecord.setEmail(createUserRequest.getEmail());
+      userAccountRepository.save(userAccountRecord);
 
+      UserAccountsRequest userAccountsRequest = new UserAccountsRequest();
+      userAccountsRequest.setUserName(userAccountRecord.getName());
+      userAccountsRequest.setAccountType(userAccountRecord.getAccountType());
+      userAccountsRequest.setEmail(userAccountRecord.getEmail());
+      userAccountsRequest.setPassword(userAccountRecord.getPassword());
+      userAccountsRequest.setUserId(userAccountRecord.getId());
 
-        userAccountRepository.save(userAccountRecord);
-        //careerRepository.save(userAccountRecord);
+      lambdaServiceClient.setUserAccounts(userAccountsRequest);
 
-        UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
-        userAccountInCareerResponse.setUserId(createUserRequest.getUserId());
-        userAccountInCareerResponse.setUserName(createUserRequest.getUserName());
-        userAccountInCareerResponse.setAccountType(createUserRequest.getAccountType());
-        userAccountInCareerResponse.setPassword(createUserRequest.getPassword());
-        userAccountInCareerResponse.setEmail(createUserRequest.getEmail());
+      UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
+      userAccountInCareerResponse.setUserId(createUserRequest.getUserId());
+      userAccountInCareerResponse.setUserName(createUserRequest.getUserName());
+      userAccountInCareerResponse.setAccountType(createUserRequest.getAccountType());
+      userAccountInCareerResponse.setPassword(createUserRequest.getPassword());
+      userAccountInCareerResponse.setEmail(createUserRequest.getEmail());
 
-        return userAccountInCareerResponse;
-    }
+      return userAccountInCareerResponse;
+  }
 
 
     // PRIVATE HELPER METHODS

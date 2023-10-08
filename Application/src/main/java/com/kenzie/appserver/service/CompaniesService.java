@@ -1,7 +1,7 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.controller.model.CompanyRequest;
-import com.kenzie.appserver.controller.model.CompanyResponse;
+import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
+import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.repositories.CompanyRepository;
 import com.kenzie.appserver.repositories.model.CompanyRecord;
 import org.springframework.http.HttpStatus;

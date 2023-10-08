@@ -47,17 +47,19 @@ public class UserAccountsDao {
         return mapper.query(UserAccountRecord.class, queryExpression);
     }
 
-    public UserAccountRecord setUserAccounts(String id, String name, String accountType, String password) {
+    public UserAccountRecord setUserAccounts(String id, String name, String accountType, String password,
+                                             String email) {
         UserAccountRecord accountsRecord = new UserAccountRecord();
         accountsRecord.setId(id);
         accountsRecord.setName(name);
         accountsRecord.setAccountType(accountType);
         accountsRecord.setPassword(password);
+        accountsRecord.setEmail(email);
 
         try {
             mapper.save(accountsRecord, new DynamoDBSaveExpression()
                     .withExpected(ImmutableMap.of(
-                            "id",
+                            "Id",
                             new ExpectedAttributeValue().withExists(false)
                     )));
         } catch (ConditionalCheckFailedException e) {

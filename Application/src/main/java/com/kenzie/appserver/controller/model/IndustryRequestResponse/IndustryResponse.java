@@ -1,4 +1,4 @@
-package com.kenzie.appserver.controller.model;
+package com.kenzie.appserver.controller.model.IndustryRequestResponse;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
