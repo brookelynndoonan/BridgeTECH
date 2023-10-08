@@ -13,11 +13,15 @@ public class LambdaServiceClient {
     private static final String GET_EXAMPLE_ENDPOINT = "example/{id}";
     private static final String SET_EXAMPLE_ENDPOINT = "example";
 
-    private static final String SET_USERACCOUNT_ENDPOINT = "user";
+    private static final String SET_USERACCOUNT_ENDPOINT = "useraccount/";
 
-    private static final String GET_USERACCOUNT_ENDPOINT = "user/{Id}";
+    private static final String GET_USERACCOUNT_ENDPOINT = "useraccount/{id}";
 
     private ObjectMapper mapper;
+
+    // Elise helped us find all the tiny discrepancies that prevented our Lambda from working.
+    // She also showed us how to test the Lambda directly on AWS. IT WORKS!
+    // Sadly, it was the difference between 'id' and 'Id' that held us back.
 
     public LambdaServiceClient() {
         this.mapper = new ObjectMapper();
@@ -49,7 +53,7 @@ public class LambdaServiceClient {
 
     public UserAccounts getUserAccounts(String id) {
         EndpointUtility endpointUtility = new EndpointUtility();
-        String response = endpointUtility.getEndpoint(SET_USERACCOUNT_ENDPOINT.replace("{Id}", id));
+        String response = endpointUtility.getEndpoint(GET_USERACCOUNT_ENDPOINT.replace("{id}", id));
         UserAccounts userAccounts;
         try {
             userAccounts = mapper.readValue(response, UserAccounts.class);

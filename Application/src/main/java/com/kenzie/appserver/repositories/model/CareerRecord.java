@@ -9,7 +9,7 @@ import java.util.Objects;
 @DynamoDBTable(tableName = "Career")
 public class CareerRecord {
 
-    private String id;
+    private String Id;
 
     private String careerName;
     private String location;
@@ -18,7 +18,7 @@ public class CareerRecord {
 
     @DynamoDBHashKey(attributeName = "Id")
     public String getId() {
-        return id;
+        return Id;
     }
 
     @DynamoDBAttribute(attributeName = "name")
@@ -41,8 +41,8 @@ public class CareerRecord {
         return companyDescription;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String Id) {
+        this.Id = Id;
     }
 
     public void setCareerName(String careerName) {
@@ -66,11 +66,11 @@ public class CareerRecord {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CareerRecord that = (CareerRecord) o;
-        return id.equals(that.id);
+        return Id.equals(that.Id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(Id);
     }
 }

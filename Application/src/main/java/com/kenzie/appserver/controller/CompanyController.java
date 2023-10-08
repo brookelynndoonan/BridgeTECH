@@ -1,7 +1,7 @@
 package com.kenzie.appserver.controller;
 
-import com.kenzie.appserver.controller.model.CompanyRequest;
-import com.kenzie.appserver.controller.model.CompanyResponse;
+import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
+import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.repositories.model.CompanyRecord;
 import com.kenzie.appserver.service.CompaniesService;
 import org.springframework.http.HttpStatus;
@@ -72,7 +72,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyResponse);
     }
 
-    @GetMapping("/companyName/byCompanyName/{CompanyName}")
+    @GetMapping("/companyName/{CompanyName}")
     public ResponseEntity<CompanyRecord> searchCompanyByName(@PathVariable("CompanyName") String companyName) {
         CompanyRecord companyRecord = companiesService.findCompanyByName(companyName);
         if (companyRecord == null) {

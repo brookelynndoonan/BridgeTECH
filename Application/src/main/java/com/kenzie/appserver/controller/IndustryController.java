@@ -1,7 +1,7 @@
 package com.kenzie.appserver.controller;
 
-import com.kenzie.appserver.controller.model.IndustryRequest;
-import com.kenzie.appserver.controller.model.IndustryResponse;
+import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryRequest;
+import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryResponse;
 import com.kenzie.appserver.repositories.model.IndustriesRecord;
 import com.kenzie.appserver.service.IndustriesService;
 import org.springframework.http.HttpStatus;
@@ -72,7 +72,7 @@ public class IndustryController {
         return ResponseEntity.ok(industryResponse);
     }
 
-    @GetMapping("/industryName/byIndustryName/{IndustryName}")
+    @GetMapping("/industryName/{IndustryName}")
     public ResponseEntity<IndustriesRecord> searchIndustryByName(@PathVariable("IndustryName") String industryName) {
         IndustriesRecord industriesRecord = industriesService.findIndustryByName(industryName);
         if (industriesRecord == null) {

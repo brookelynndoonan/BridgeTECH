@@ -49,15 +49,17 @@ public class LambdaService {
         List<UserAccountRecord> records = userAccountsDao.getUserAccounts(id);
         if (records.size() > 0) {
             return new UserAccounts(records.get(0).getId(), records.get(0).getName(),
-                    records.get(0).getAccountType(), records.get(0).getPassword());
+                    records.get(0).getAccountType(), records.get(0).getPassword(),
+                    records.get(0).getEmail());
         }
         return null;
     }
 
-    public UserAccounts setUserAccounts(String name, String accountType, String password) {
+    public UserAccounts setUserAccounts(String name, String accountType, String password,
+    String email) {
         String id = UUID.randomUUID().toString();
-        userAccountsDao.setUserAccounts(id, name, accountType, password);
-        return new UserAccounts(id, name, accountType, password);
+        userAccountsDao.setUserAccounts(id, name, accountType, password, email);
+        return new UserAccounts(id, name, accountType, password, email);
     }
 
     public UserAccountsResponse setUserAccounts(UserAccountsRequest request) {

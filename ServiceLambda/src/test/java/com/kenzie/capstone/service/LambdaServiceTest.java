@@ -96,17 +96,21 @@ class LambdaServiceTest {
         ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> accountTypeCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass(String.class);
 
         // GIVEN
         String name = "name";
         String accountType = "accountType";
         String password = "password";
+        String email = "dragonhatchet@wcingguild.com";
 
         // WHEN
-        UserAccounts response = this.lambdaService.setUserAccounts(name,accountType,password);
+        UserAccounts response = this.lambdaService.setUserAccounts(name,accountType,password, email);
 
         // THEN
-        verify(userAccountsDao, times(1)).setUserAccounts(idCaptor.capture(), nameCaptor.capture(), accountTypeCaptor.capture(), passwordCaptor.capture());
+        verify(userAccountsDao, times(1)).setUserAccounts(idCaptor.capture(),
+                nameCaptor.capture(), accountTypeCaptor.capture(),
+                passwordCaptor.capture(), emailCaptor.capture());
 
         assertNotNull(idCaptor.getValue(), "An ID is generated");
         assertEquals(name, nameCaptor.getValue(), "The name is saved");
