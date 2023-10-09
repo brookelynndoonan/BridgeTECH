@@ -1,6 +1,5 @@
 package com.kenzie.capstone.service.dependency;
 
-import com.kenzie.capstone.service.dao.ExampleDao;
 import com.kenzie.capstone.service.dao.UserAccountsDao;
 import com.kenzie.capstone.service.util.DynamoDbClientProvider;
 

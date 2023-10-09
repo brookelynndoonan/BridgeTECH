@@ -2,9 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>dashBoardPage</title>
+    <script type="text/javascript" src="dashboardPage.js"></script>
+
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 </head>
 <body>
+<!--
+    Welcome Back box, sideBar, roadMap box, saved posts box
+    HELLO (new userName here)
+-->
+<!--
+    have the Roadmap , picture of user, list of saved posts,
+-->
+<div class="side-bar" id="side-bar">
+    <div class="logo-details" id="logo">
+        <span class="logo-name">BridgeTECH</span>
+    </div>
+    <ul class="nav-list">
+        <li>
+            <a href="homePage.html" class="">
+                 <iconify-icon icon="bi:house"></iconify-icon>
+                 <span class="link-name">Home</span>
+            </a>
+        </li>
+        <li>
+            <a href="careerPage.html">
+                <iconify-icon icon="healthicons:city-worker"></iconify-icon>
+                <span class="link-name">Careers</span>
+            </a>
+        </li>
+        <li>
+            <a href="industryPage.html">
+                <iconify-icon icon="solar:city-linear"></iconify-icon>
+                <span class="link-name">Industries</span>
+            </a>
+        </li>
+        <li>
+            <a href="">
+                <iconify-icon icon="dashicons:saved"></iconify-icon>
+                <span class="link-name">Saved Careers</span>
+            </a>
+        </li>
+        <li>
+            <a href="">
+                <iconify-icon icon="quill:cog"></iconify-icon>
+                <span class="link-name">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a href="homePage.html">
+                <span class="link-name">Logout</span>
+            </a>
+        </li>
+    </ul>
+<!--         <div class="roadmap-container"></div>-->
+</div>
+<section class="home-section">
+    <nav>
+        <div class="sidebar-button">
+            <iconify-icon icon="heroicons-solid:menu"></iconify-icon>
+            <span class="dashboard">Dashboard</span>
+        </div>
+        <div class="profile-details">
+            <img src="">
+            <span class="user-name" id="user-name"></span>
+        </div>
+    </nav>
 
+    <div class="home-content">
+        <div class="roadmap-box">
+           <div class="title">Roadmap</div>
+            <div class="roadmap-details"></div>
+            <div class="enter-button">
+                <a href="">Click to start your Journey</a>
+            </div>
+        </div>
+
+        <div class="recommended-industries">
+            <div class="title">Recommended Industries</div>
+            <ul class="recommended-industries-list">
+                <li>
+                    <a href="">
+                        <span class="industry"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
 </body>
 </html>

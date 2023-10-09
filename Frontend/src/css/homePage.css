@@ -4,20 +4,24 @@
     box-sizing: border-box;
 }
 
-body{
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
-    /*min-height: 100vh;*/
-    background-image: url(https://images.pexels.com/photos/5984612/pexels-photo-5984612.jpeg?auto=compress&cs=tinysrgb&w=800);
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
+/*body{*/
+/*    !*display: flex;*!*/
+/*    !*justify-content: center;*!*/
+/*    !*align-items: center;*!*/
+/*    !*min-height: 100vh;*!*/
+/*    background-image: url(https://images.pexels.com/photos/5984612/pexels-photo-5984612.jpeg?auto=compress&cs=tinysrgb&w=800);*/
+/*    background-size: cover;*/
+/*    background-repeat: no-repeat;*/
+/*    background-attachment: fixed;*/
+/*}*/
 
 /* Styling the background */
 .background {
     background-color: #3a3842;
+    background-image: url(https://images.pexels.com/photos/5984612/pexels-photo-5984612.jpeg?auto=compress&cs=tinysrgb&w=800);
+    background-size: cover;
+    background-repeat: no-repeat;
+    /*background-attachment: fixed;*/
 }
 
 /* Styling the header */
@@ -26,6 +30,7 @@ body{
     display: flex;
     flex-wrap: wrap;
     margin-inline: auto;
+
 
 }
 
@@ -72,6 +77,8 @@ body{
     height: 300px;
     transform-style: preserve-3d;
     animation: animate 20s linear infinite;
+    margin: auto;
+    margin-top: 100px;
 }
 
 @keyframes animate {
@@ -95,16 +102,16 @@ body{
         /*-webkit-box-reflect: below 0px linear-gradient(transparent, transparent, #0004);*/
 }
 
-.root span ::before{
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 30%; /* Adjust to control the height of the reflection */
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-    transform: scaleY(-1);
-}
+/*.root span ::before{*/
+/*    content: "";*/
+/*    position: absolute;*/
+/*    top: 100%;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 30%; !* Adjust to control the height of the reflection *!*/
+/*    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, transparent 50%);*/
+/*    transform: scaleY(-1);*/
+/*}*/
 .root span img{
     position: absolute;
     top: 0;
@@ -113,4 +120,22 @@ body{
     height: 100%;
     object-fit: cover;
 
+}
+.image-container{
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+}
+.image-container::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background-image: url(https://images.pexels.com/photos/6153741/pexels-photo-6153741.jpeg?auto=compress&cs=tinysrgb&w=800);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    transform: scaleY(-1);
+/*!* opacity: 0.5;*/
 }

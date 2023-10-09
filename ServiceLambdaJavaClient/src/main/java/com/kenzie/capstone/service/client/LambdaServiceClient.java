@@ -2,7 +2,6 @@ package com.kenzie.capstone.service.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kenzie.capstone.service.model.ExampleData;
 import com.kenzie.capstone.service.model.UserAccounts;
 import com.kenzie.capstone.service.model.UserAccountsRequest;
 import com.kenzie.capstone.service.model.UserAccountsResponse;
@@ -23,7 +22,6 @@ public class LambdaServiceClient {
     public LambdaServiceClient() {
         this.mapper = new ObjectMapper();
     }
-
 
     public UserAccounts getUserAccounts(String id) {
         EndpointUtility endpointUtility = new EndpointUtility();
