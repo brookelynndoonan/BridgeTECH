@@ -6,6 +6,7 @@ import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateR
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
 import com.kenzie.appserver.repositories.CareerRepository;
+import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.service.CareerService;
 import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -123,18 +126,27 @@ public class CareerControllerTest {
         careerRequest.setCompanyDescription("Company Description");
         careerRequest.setId(Id);
 
-        careerService.addNewCareer(careerRequest);
+        // Mock the behavior of careerRepository to return a CareerRecord when findById is called.
+        CareerRecord mockRecord = new CareerRecord();
+        mockRecord.setId(Id);
+        mockRecord.setCareerName("name");
+        mockRecord.setLocation("location");
+        mockRecord.setJobDescription("Job Description");
+        mockRecord.setCompanyDescription("Company Description");
+
+        when(careerRepository.findById(Id)).thenReturn(Optional.of(mockRecord));
 
         // WHEN
         mockMvc.perform(get("/Career/{Id}", Id)
                         .accept(MediaType.APPLICATION_JSON))
                 // THEN
-                .andExpect(jsonPath("Id")
+                .andExpect(jsonPath("$.Id")
                         .value(is(Id)))
-                .andExpect(jsonPath("name")
+                .andExpect(jsonPath("$.name")
                         .value(is(careerRequest.getName())))
                 .andExpect(status().isOk());
     }
+
 
 
 
@@ -146,7 +158,7 @@ public class CareerControllerTest {
 
         String nonExistentCareerId = UUID.randomUUID().toString();
 
-        careerService.findCareerById(null);
+        careerService.findCareerById("idThatDoesNotExist");
 
         mockMvc.perform(get("/Career/{Id}", nonExistentCareerId))
                 .andExpect(status().isNotFound());
