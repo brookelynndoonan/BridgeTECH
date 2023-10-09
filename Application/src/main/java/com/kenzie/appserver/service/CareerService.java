@@ -1,6 +1,6 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStoreCareer;
+import com.kenzie.appserver.config.cachestore.CacheStoreCareer;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
@@ -12,8 +12,6 @@ import com.kenzie.appserver.repositories.CareerRepository;
 import com.kenzie.appserver.service.model.Career;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccountRecord;
-import com.kenzie.capstone.service.model.UserAccounts;
-import com.kenzie.capstone.service.model.UserAccountsRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -121,14 +119,13 @@ public class CareerService {
         }
     }
 
-    public UserAccountInCareerResponse getUsers(String userId) {
-        UserAccounts users = lambdaServiceClient.getUserAccounts(userId);
+    public UserAccountInCareerResponse getUsers(String email) {
+        Optional<UserAccountRecord> users = userAccountRepository.findById(email);
 
-        if (users != null) {
+        if (users.isPresent()) {
             UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
-            userAccountInCareerResponse.setUserId(users.getId());
-            userAccountInCareerResponse.setUserName(users.getName());
-            userAccountInCareerResponse.setEmail(users.getEmail());
+            userAccountInCareerResponse.setEmail(users.get().getEmail());
+            userAccountInCareerResponse.setPassword(users.get().getPassword());
 
             return userAccountInCareerResponse;
         } else {
@@ -146,15 +143,6 @@ public class CareerService {
         userAccountRecord.setEmail(createUserRequest.getEmail());
 
         userAccountRepository.save(userAccountRecord);
-
-        UserAccountsRequest userAccountsRequest = new UserAccountsRequest();
-        userAccountsRequest.setUserName(userAccountRecord.getName());
-        userAccountsRequest.setAccountType(userAccountRecord.getAccountType());
-        userAccountsRequest.setEmail(userAccountRecord.getEmail());
-        userAccountsRequest.setPassword(userAccountRecord.getPassword());
-        userAccountsRequest.setUserId(userAccountRecord.getId());
-
-        lambdaServiceClient.setUserAccounts(userAccountsRequest);
 
         UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
         userAccountInCareerResponse.setUserId(createUserRequest.getUserId());

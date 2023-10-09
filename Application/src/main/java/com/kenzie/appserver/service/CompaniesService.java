@@ -1,18 +1,15 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStoreCareer;
-import com.kenzie.appserver.config.CacheStoreCompanies;
+import com.kenzie.appserver.config.cachestore.CacheStoreCompanies;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.repositories.CompanyRepository;
 import com.kenzie.appserver.repositories.model.CompanyRecord;
 import com.kenzie.appserver.service.model.Companies;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -58,23 +55,6 @@ public class CompaniesService {
         return companiesFromBackendService;
     }
 
-    public CompanyRecord findCompanyByName(String companyName) {
-
-        if (companyName != null) {
-
-            return companyRepository.findCompanyByName(companyName);
-        } else {
-            return null;
-        }
-    }
-
-    public List<CompanyResponse> findAllCompaniesByName(String companyName) {
-        List<CompanyRecord> recordList = companyRepository.findByCompanyName(companyName);
-
-        return recordList.stream()
-                .map(this::companyResponseFromRecord)
-                .collect(Collectors.toList());
-    }
 
     public CompanyResponse addNewCompany(CompanyRequest companyRequest) {
 
@@ -85,6 +65,21 @@ public class CompaniesService {
         return companyResponseFromRecord(companyRecord);
 
 
+    }
+
+    //Blake helped me write this method.
+    public List<CompanyResponse> findAllCompaniesByName(String companyName) {
+        Iterable<CompanyRecord> recordList = companyRepository.findAll();
+
+        List<CompanyRecord> companyList = new ArrayList<>();
+        for (CompanyRecord companyRecord : recordList) {
+            if (companyRecord.getCompanyName().equals(companyName)) {
+                companyList.add(companyRecord);
+            }
+        }
+        return companyList.stream()
+                .map(this::companyResponseFromRecord)
+                .collect(Collectors.toList());
     }
 
     public void updateCompany(Companies companies) {

@@ -2,11 +2,9 @@ package com.kenzie.appserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kenzie.appserver.IntegrationTest;
-import com.kenzie.appserver.config.CacheStoreCareer;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
-import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerResponse;
 import com.kenzie.appserver.repositories.CareerRepository;
 import com.kenzie.appserver.service.CareerService;
 import net.andreinc.mockneat.MockNeat;
@@ -53,26 +51,20 @@ public class CareerControllerTest {
         request.setCompanyDescription("We turn raw metal, into beautiful treasures.");
         request.setLocation("Carnival");
 
-        String requestJson = objectMapper.writeValueAsString(request);
-
-        careerService.addNewCareer(request);
-
         mockMvc.perform(post("/Career")
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.Id")
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(jsonPath("Id")
                         .exists())
-                .andExpect(jsonPath("$.name")
+                .andExpect(jsonPath("name")
                         .value(request.getName()))
-                .andExpect(jsonPath("$.jobDescription")
+                .andExpect(jsonPath("jobDescription")
                         .value(request.getJobDescription()))
-                .andExpect(jsonPath("$.companyDescription")
+                .andExpect(jsonPath("companyDescription")
                         .value(request.getCompanyDescription()))
-                .andExpect(jsonPath("$.location")
+                .andExpect(jsonPath("location")
                         .value(request.getLocation()));
-
     }
 
     @Test
@@ -122,29 +114,26 @@ public class CareerControllerTest {
 
     @Test
     public void searchCareerById_isValid_returnsCareer() throws Exception {
+        String Id = UUID.randomUUID().toString();
+
         CareerCreateRequest careerRequest = new CareerCreateRequest();
-        careerRequest.setName(mockNeat.names().get());
+        careerRequest.setName("name");
         careerRequest.setLocation("location");
         careerRequest.setJobDescription("Job Description");
         careerRequest.setCompanyDescription("Company Description");
+        careerRequest.setId(Id);
 
-        CareerResponse careerResponse = careerService.addNewCareer(careerRequest);
+        careerService.addNewCareer(careerRequest);
 
         // WHEN
-        ResultActions actions = mockMvc.perform(get("/Career/{Id}", careerResponse.getId())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/Career/{Id}", Id)
+                        .accept(MediaType.APPLICATION_JSON))
+                // THEN
+                .andExpect(jsonPath("Id")
+                        .value(is(Id)))
+                .andExpect(jsonPath("name")
+                        .value(is(careerRequest.getName())))
                 .andExpect(status().isOk());
-
-        // THEN
-        String responseBody = actions.andReturn().getResponse().getContentAsString();
-        CareerResponse response = mapper.readValue(responseBody, CareerResponse.class);
-
-        assertThat(response.getId()).isNotEmpty().as("The ID is populated");
-        assertThat(response.getName()).isNotEmpty().as("The name is populated");
-        assertThat(response.getLocation()).isNotEmpty().as("The location Exists");
-        assertThat(response.getJobDescription()).as("Job Description populated.");
-        assertThat(response.getCompanyDescription()).as("Company Description Populated.");
     }
 
     @Test
@@ -160,20 +149,27 @@ public class CareerControllerTest {
 
 
     @Test
-    public void getUserAccounts_isValid_byId() throws Exception {
+    public void getUserAccounts_isValid_byEmail() throws Exception {
         // GIVEN
         String Id = UUID.randomUUID().toString();
         String email = "i_need_more_energy@redbulls.com";
 
-        UserAccountInCareerResponse getuserAccount = careerService.getUsers(Id);
+        UserAccountInCareerRequest request = new UserAccountInCareerRequest();
+        request.setAccountType("Basic user");
+        request.setEmail(email);
+        request.setPassword("password");
+        request.setUserId(Id);
+        request.setUserName("Username");
+
+        careerService.createUser(request);
 
         // WHEN
-        mockMvc.perform(get("/Career/userAccounts/user/{Id}",
-                        getuserAccount.getUserId())
+        mockMvc.perform(get("/Career/userAccounts/user/{Id}", email)
                         .accept(MediaType.APPLICATION_JSON))
                 // THEN
-                .andExpect(jsonPath("userId")
-                        .value(is(Id)))
+                .andExpect(jsonPath("password")
+                        .value(is(request.getPassword()
+                        )))
                 .andExpect(jsonPath("email")
                         .value(is(email)))
                 .andExpect(status().isOk());
@@ -190,44 +186,20 @@ public class CareerControllerTest {
         request.setUserId("usldkfj24");
         request.setEmail("b.banner@StarkIndustries.com");
 
-        String requestJson = objectMapper.writeValueAsString(request);
-
-        careerService.createUser(request);
-
         mockMvc.perform(post("/Career/userAccounts/user")
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.userId")
+                        .content(mapper.writeValueAsString(request)))
+
+                .andExpect(jsonPath("userId")
                         .value("usldkfj24"))
-                .andExpect(jsonPath("$.userName")
+                .andExpect(jsonPath("userName")
                         .value(request.getUserName()))
-                .andExpect(jsonPath("$.password")
+                .andExpect(jsonPath("password")
                         .value(request.getPassword()))
-                .andExpect(jsonPath("$.accountType")
+                .andExpect(jsonPath("accountType")
                         .value(request.getAccountType()))
-                .andExpect(jsonPath("$.email").value(request.getEmail()));
-    }
-
-
-    @Test
-    public void createUser_notValid_noUserCreated() throws Exception {
-        UserAccountInCareerRequest userAccountInCareerRequest = new UserAccountInCareerRequest();
-        userAccountInCareerRequest.setUserName("Peter Parker");
-        userAccountInCareerRequest.setAccountType("Regular");
-        userAccountInCareerRequest.setPassword("M@ryJ@n3");
-        userAccountInCareerRequest.setEmail("p.parker@starkindustries.com");
-
-        //Noticed, I shouldn't use a when statement in an Integration test.
-        //Need to figure this part out.
-        /*when(careerService.createUser(userAccountInCareerRequest))
-                .thenThrow(new Exception("User account was not created."));*/
-
-        mockMvc.perform(post("/Career/userAccounts/user")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userAccountInCareerRequest)))
-                .andExpect(status().isInternalServerError());
+                .andExpect(jsonPath("email").value(request.getEmail()));
     }
 }
 

@@ -1,15 +1,18 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStoreCareer;
+import com.kenzie.appserver.config.cachestore.CacheStoreCareer;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
+import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerResponse;
 import com.kenzie.appserver.repositories.CareerRepository;
 import com.kenzie.appserver.repositories.UserAccountRepository;
 import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.service.model.Career;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
-
+import com.kenzie.capstone.service.model.UserAccountRecord;
+import com.kenzie.capstone.service.model.UserAccountsRequest;
+import com.kenzie.capstone.service.model.UserAccountsResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +25,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class CareerServiceTest {
@@ -132,16 +136,18 @@ public class CareerServiceTest {
     }
 
     @Test
-    void findByCareerId_cacheNotNull_returnCachedCareer(){
-
+    void findByCareerId_cacheNotNull_returnCachedCareer() {
+        // GIVEN
         String careerId = randomUUID().toString();
         Career career = new Career(careerId, "career name", "location",
                 "jobDescription", "companyDescription");
 
+        // WHEN
         when(cache.get(careerId)).thenReturn(career);
 
         Career actualCareer = careerService.findCareerById(careerId);
 
+        // THEN
         Assertions.assertEquals(career, actualCareer);
     }
 
@@ -273,66 +279,69 @@ public class CareerServiceTest {
         verify(careerRepository, never()).deleteById(careerId);
     }
 
-   /* @Test
-    void getUsers_isValid_byUserId() {
+    @Test
+    public void getUsersWithExistingEmail_isValid_returnsUser() {
         // GIVEN
-        UserAccounts fakeAccount = new UserAccounts();
-        fakeAccount.setId("5464768");
-        fakeAccount.setName("Pepper Potts");
+        String email = "knights.of.falador@gielinorguards.com";
+        UserAccountRecord userAccountRecord = new UserAccountRecord();
+        userAccountRecord.setEmail(email);
+        userAccountRecord.setPassword("password");
+        when(userAccountRepository.findById(email)).thenReturn(Optional.of(userAccountRecord));
 
         // WHEN
-        when(lambdaServiceClient.getUserAccounts("5464768")).thenReturn(fakeAccount);
+        UserAccountInCareerResponse response = careerService.getUsers(email);
 
         // THEN
-        UserAccountInCareerResponse userAccountsResponse = careerService.getUsers("5464768");
-
-        assertEquals("5464768", userAccountsResponse.getUserId());
-        assertEquals("Pepper Potts", userAccountsResponse.getUserName());
-    }*/
-
-    @Test
-    public void testGetUsers_NullResponse() {
-        // GIVEN/WHEN
-        when(lambdaServiceClient.getUserAccounts(anyString())).thenReturn(null);
-
-        UserAccountInCareerResponse userAccountsResponse = careerService.getUsers("452452");
-
-        // THEN
-        assertNull(userAccountsResponse);
+        assertEquals(email, response.getEmail());
+        assertEquals("password", response.getPassword());
     }
 
-   /* @Test
-    public void testCreateUser_Success() throws Exception {
+    @Test
+    public void getUsersWithNonExistingEmail_isNotValid_noUser() {
         // GIVEN
-        UserAccountsResponse userAccountsResponse = new UserAccountsResponse();
-        userAccountsResponse.setId("74654");
-        userAccountsResponse.setUserName("Remy LeBeau");
-        userAccountsResponse.setAccountType("Card Magic");
-        userAccountsResponse.setPassword("G@mb1t");
+        String email = "noemail@doesntexistland.com";
+        when(userAccountRepository.findById(email)).thenReturn(Optional.empty());
 
         // WHEN
-        when(lambdaServiceClient.setUserAccounts(any(UserAccountsRequest.class))).thenReturn(userAccountsResponse);
-
-        UserAccountInCareerResponse userAccountInCareerResponse = careerService.createUser("Remy LeBeau", "Card Magic",
-                "G@mb1t", "561");
+        UserAccountInCareerResponse response = careerService.getUsers(email);
 
         // THEN
-        assertEquals("74654", userAccountsResponse.getId());
-        assertEquals("Remy LeBeau", userAccountsResponse.getUserName());
-        assertEquals("Card Magic", userAccountsResponse.getAccountType());
-        assertEquals("G@mb1t", userAccountsResponse.getPassword());
-    }*/
+        assertEquals(null, response);
+    }
 
- /*   @Test
-    public void testCreateUser_NullResponse() throws Exception {
-        // GIVEN/WHEN
-        when(lambdaServiceClient.setUserAccounts(any(UserAccountsRequest.class))).thenReturn(null);
+    @Test
+    public void CreateUser_isValid_userCreated() {
+        // GIVEN
+        UserAccountsRequest userAccountsRequest = new UserAccountsRequest();
+        userAccountsRequest.setUserId("74654");
+        userAccountsRequest.setUserName("Remy LeBeau");
+        userAccountsRequest.setAccountType("Card Magic");
+        userAccountsRequest.setPassword("G@mb1t");
+
+        UserAccountInCareerRequest userAccountsCareerRequest = new UserAccountInCareerRequest();
+        userAccountsCareerRequest.setUserId("74654");
+        userAccountsCareerRequest.setUserName("Remy LeBeau");
+        userAccountsCareerRequest.setAccountType("Card Magic");
+        userAccountsCareerRequest.setPassword("G@mb1t");
+
+        UserAccountsResponse userAccountsResponse = new UserAccountsResponse();
+        userAccountsResponse.setId(userAccountsRequest.getUserId());
+        userAccountsResponse.setUserName(userAccountsRequest.getUserName());
+        userAccountsResponse.setAccountType(userAccountsRequest.getAccountType());
+        userAccountsResponse.setPassword(userAccountsRequest.getPassword());
+
+        when(lambdaServiceClient.setUserAccounts(userAccountsRequest)).thenReturn(userAccountsResponse);
+
+        // WHEN
+        UserAccountInCareerResponse response = careerService.createUser(userAccountsCareerRequest);
 
         // THEN
-        assertThrows(Exception.class, () -> {
-            careerService.createUser("Dr. Jean Grey", "Professor", "Ph0en1xRul3z", "3615");
-        });
-    }*/
+        assertEquals("74654", response.getUserId());
+        assertEquals("Remy LeBeau", response.getUserName());
+        assertEquals("Card Magic", response.getAccountType());
+        assertEquals("G@mb1t", response.getPassword());
+    }
+
 
 }
 

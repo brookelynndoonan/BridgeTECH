@@ -1,11 +1,8 @@
 package com.kenzie.appserver.controller;
 
-import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
-import com.kenzie.appserver.repositories.model.CompanyRecord;
 import com.kenzie.appserver.service.CompaniesService;
-import com.kenzie.appserver.service.model.Career;
 import com.kenzie.appserver.service.model.Companies;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +37,8 @@ public class CompanyController {
     @PutMapping
     public ResponseEntity<CompanyResponse> updateCompany(@RequestBody CompanyRequest companyRequest) {
         Companies companies = new Companies(companyRequest.getCompanyId(),
-        companyRequest.getCompanyDescription(),
-        companyRequest.getCompanyName());
+                companyRequest.getCompanyDescription(),
+                companyRequest.getCompanyName());
         companiesService.updateCompany(companies);
 
         CompanyResponse companyResponse = createCompanyResponse(companies);
@@ -59,9 +56,10 @@ public class CompanyController {
         return ResponseEntity.ok(companies);
     }
 
-    @GetMapping("/byName")
-    public ResponseEntity<List<CompanyResponse>> getAllCompaniesByName(@RequestParam("companyName") String companyName) {
-        List<CompanyResponse> companies = companiesService.findAllCompaniesByName(companyName);
+    //Blake helped me write this method.
+    @GetMapping("/byName/{name}")
+    public ResponseEntity<List<CompanyResponse>> getAllCompaniesByName(@PathVariable String name) {
+        List<CompanyResponse> companies = companiesService.findAllCompaniesByName(name);
         if (companies == null || companies.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -79,15 +77,6 @@ public class CompanyController {
 
         CompanyResponse companyResponse = createCompanyResponse(companies);
         return ResponseEntity.ok(companyResponse);
-    }
-
-    @GetMapping("/companyName/{CompanyName}")
-    public ResponseEntity<CompanyRecord> searchCompanyByName(@PathVariable("CompanyName") String companyName) {
-        CompanyRecord companyRecord = companiesService.findCompanyByName(companyName);
-        if (companyRecord == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(companyRecord);
     }
 
     @DeleteMapping("/{Id}")
