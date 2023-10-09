@@ -57,10 +57,10 @@ public class CareerService {
     }
 
     public Career findCareerById(String Id) {
-//        Career cachedCareer = cache.get(Id);
-//        if (cachedCareer != null) {
-//            return cachedCareer;
-//        }
+        Career cachedCareer = cache.get(Id);
+        if (cachedCareer != null) {
+            return cachedCareer;
+        }
         Optional<CareerRecord> careerRecordOptional = careerRepository.findById(Id);
         if (careerRecordOptional.isPresent()) {
             CareerRecord careerRecord = careerRecordOptional.get();
@@ -71,7 +71,7 @@ public class CareerService {
                     careerRecord.getJobDescription(),
                     careerRecord.getCompanyDescription()
             );
-//            cache.add(Id, careerFromBackendService);
+            cache.add(Id, careerFromBackendService);
             return careerFromBackendService;
         }
         return null;
@@ -101,15 +101,15 @@ public class CareerService {
     }
 
 
-    public void deleteCareer(String Id, String userId) {
-        Optional<CareerRecord> career = careerRepository.findById(Id);
+    public void deleteCareer(String id, String userId) {
+        Optional<CareerRecord> career = careerRepository.findById(id);
 
         if (career.isPresent()) {
             CareerRecord careerRecord = career.get();
 
             if (careerRecord.getId().equals(userId)) {
-                careerRepository.deleteById(Id);
-                cache.evict(Id);
+                careerRepository.deleteById(id);
+                cache.evict(id);
             } else {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                         "You are not authorized to delete this career");
