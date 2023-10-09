@@ -11,6 +11,7 @@ module.exports = {
     loginPage: path.resolve(__dirname, 'src', 'pages', 'loginPage.js'),
     signUpPage: path.resolve(__dirname, 'src', 'pages', 'signUpPage.js'),
     careerPage: path.resolve(__dirname, 'src', 'pages', 'careerPage.js'),
+    dashboardPage: path.resolve(__dirname, 'src','pages','dashboardPage.js')
 
   },
   output: {
@@ -47,6 +48,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/loginPage.html',
       filename: 'loginPage.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/dashboard.html',
+      filename: 'dashboard.html',
       inject: false
     }),
     new CopyPlugin({
