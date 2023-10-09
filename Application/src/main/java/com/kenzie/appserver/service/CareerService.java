@@ -61,19 +61,20 @@ public class CareerService {
         if (cachedCareer != null) {
             return cachedCareer;
         }
-        Career careerFromBackendService = careerRepository
-                .findById(Id)
-                .map(career -> new Career(career.getId(),
-                        career.getCareerName(),
-                        career.getLocation(),
-                        career.getJobDescription(),
-                        career.getCompanyDescription()))
-                .orElse(null);
-
-        if (careerFromBackendService != null) {
-            cache.add(careerFromBackendService.getId(), careerFromBackendService);
+        Optional<CareerRecord> careerRecordOptional = careerRepository.findById(Id);
+        if (careerRecordOptional.isPresent()) {
+            CareerRecord careerRecord = careerRecordOptional.get();
+            Career careerFromBackendService = new Career(
+                    careerRecord.getId(),
+                    careerRecord.getCareerName(),
+                    careerRecord.getLocation(),
+                    careerRecord.getJobDescription(),
+                    careerRecord.getCompanyDescription()
+            );
+            cache.add(Id, careerFromBackendService);
+            return careerFromBackendService;
         }
-        return careerFromBackendService;
+        return null;
     }
 
     public CareerResponse addNewCareer(CareerCreateRequest careerCreateRequest) {
@@ -83,9 +84,8 @@ public class CareerService {
         careerRepository.save(careerRecord);
 
         return createCareerResponseFromRecord(careerRecord);
-
-
     }
+
 
     public void updateCareer(Career career) {
         if (careerRepository.existsById(career.getId())) {
@@ -158,9 +158,11 @@ public class CareerService {
     // PRIVATE HELPER METHODS
     private CareerRecord createCareerRecordFromRequest(CareerCreateRequest request) {
 
+        String careerId = UUID.randomUUID().toString();
+
         CareerRecord record = new CareerRecord();
 
-        record.setId(UUID.randomUUID().toString());
+        record.setId(careerId);
         record.setCareerName(request.getName());
         record.setLocation(request.getLocation());
         record.setJobDescription(request.getJobDescription());
@@ -168,7 +170,6 @@ public class CareerService {
 
         return record;
     }
-
     private CareerResponse createCareerResponseFromRecord(CareerRecord careerRecord) {
 
         CareerResponse response = new CareerResponse();
@@ -181,6 +182,4 @@ public class CareerService {
 
         return response;
     }
-
-
 }

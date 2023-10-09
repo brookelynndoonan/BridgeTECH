@@ -39,7 +39,7 @@ public class CareerController {
         CareerResponse response = careerService.addNewCareer(careerCreateRequest);
 
 
-        return ResponseEntity.created(URI.create("/careers/" + response.getId())).body(response);
+        return ResponseEntity.created(URI.create("/Career/" + response.getId())).body(response);
 
     }
 
@@ -60,9 +60,9 @@ public class CareerController {
 
     @GetMapping
     public ResponseEntity<List<CareerResponse>> getAllCareers() {
-        List<Career> career = careerService.findAllCareers();
+        List<Career> career  = careerService.findAllCareers();
 
-        if (career == null || career.isEmpty()) {
+        if (career == null ||  career.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
