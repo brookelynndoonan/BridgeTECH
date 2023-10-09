@@ -26,14 +26,6 @@ public class DaoModule {
 
     @Singleton
     @Provides
-    @Named("ExampleDao")
-    @Inject
-    public ExampleDao provideExampleDao(@Named("DynamoDBMapper") DynamoDBMapper mapper) {
-        return new ExampleDao(mapper);
-    }
-
-    @Singleton
-    @Provides
     @Named("UserAccountsDao")
     @Inject
     public UserAccountsDao provideUserAccountsDao(@Named("DynamoDBMapper") DynamoDBMapper mapper) {
