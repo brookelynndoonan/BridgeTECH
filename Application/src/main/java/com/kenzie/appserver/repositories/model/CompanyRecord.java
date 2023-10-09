@@ -12,23 +12,14 @@ public class CompanyRecord {
     private String companyName;
     private String companyDescription;
     private String companyId;
-    private String name;
 
-    @DynamoDBAttribute(attributeName = "name")
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @DynamoDBAttribute(attributeName = "Company Name")
+    @DynamoDBAttribute(attributeName = "companyName")
     public String getCompanyName() {
         return companyName;
     }
 
-    @DynamoDBAttribute(attributeName = "Description")
+    @DynamoDBAttribute(attributeName = "description")
     public String getCompanyDescription() {
         return companyDescription;
     }
@@ -55,7 +46,9 @@ public class CompanyRecord {
         if (this == o) return true;
         if (!(o instanceof CompanyRecord)) return false;
         CompanyRecord that = (CompanyRecord) o;
-        return Objects.equals(getCompanyName(), that.getCompanyName()) && Objects.equals(getCompanyDescription(), that.getCompanyDescription()) && Objects.equals(getCompanyId(), that.getCompanyId());
+        return Objects.equals(getCompanyName(), that.getCompanyName())
+                && Objects.equals(getCompanyDescription(), that.getCompanyDescription())
+                && Objects.equals(getCompanyId(), that.getCompanyId());
     }
 
     @Override

@@ -12,23 +12,13 @@ public class IndustriesRecord {
     private String industryName;
     private String industryDescription;
     private String industryId;
-    private String name;
 
-    @DynamoDBAttribute(attributeName = "name")
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @DynamoDBAttribute(attributeName = "Industry Name")
+    @DynamoDBAttribute(attributeName = "industryName")
     public String getIndustryName() {
         return industryName;
     }
 
-    @DynamoDBAttribute(attributeName = "Description")
+    @DynamoDBAttribute(attributeName = "description")
     public String getIndustryDescription() {
         return industryDescription;
     }

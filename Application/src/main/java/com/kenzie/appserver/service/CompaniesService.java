@@ -1,9 +1,12 @@
 package com.kenzie.appserver.service;
 
+import com.kenzie.appserver.config.CacheStoreCareer;
+import com.kenzie.appserver.config.CacheStoreCompanies;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.repositories.CompanyRepository;
 import com.kenzie.appserver.repositories.model.CompanyRecord;
+import com.kenzie.appserver.service.model.Companies;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,9 +20,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class CompaniesService {
     private CompanyRepository companyRepository;
+    private final CacheStoreCompanies cacheStore;
 
-    public CompaniesService(CompanyRepository companyRepository) {
+    public CompaniesService(CompanyRepository companyRepository, CacheStoreCompanies cacheStore) {
         this.companyRepository = companyRepository;
+        this.cacheStore = cacheStore;
     }
 
     public List<CompanyResponse> findAllCompanies() {
@@ -32,12 +37,25 @@ public class CompaniesService {
                 .collect(Collectors.toList());
     }
 
-    public CompanyResponse findCompanyById(String id) {
+    public Companies findByCompaniesId(String companyId) {
+        Companies cachedCompanies = cacheStore.get(companyId);
 
-        return companyRepository
-                .findById(id)
-                .map(this::companyResponseFromRecord)
+        if (cachedCompanies != null) {
+            return cachedCompanies;
+        }
+
+        Companies companiesFromBackendService = companyRepository
+                .findById(companyId)
+                .map(companies -> new Companies(companies.getCompanyName(),
+                        companies.getCompanyDescription(), companyId))
                 .orElse(null);
+
+
+        if (companiesFromBackendService != null) {
+            cacheStore.add(companiesFromBackendService.getCompanyId(), companiesFromBackendService);
+        }
+
+        return companiesFromBackendService;
     }
 
     public CompanyRecord findCompanyByName(String companyName) {
@@ -69,28 +87,21 @@ public class CompaniesService {
 
     }
 
-    public CompanyResponse updateCompany(String id, String name, String description) {
-
-        Optional<CompanyRecord> companyExist = companyRepository.findById(id);
-
-        if (companyExist.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Company Not Found");
+    public void updateCompany(Companies companies) {
+        if (companyRepository.existsById(companies.getCompanyId())) {
+            CompanyRecord companyRecord = new CompanyRecord();
+            companyRecord.setCompanyId(companies.getCompanyId());
+            companyRecord.setCompanyName(companies.getCompanyName());
+            companyRecord.setCompanyDescription(companies.getCompanyDescription());
+            companyRepository.save(companyRecord);
+            cacheStore.evict(companyRecord.getCompanyId());
         }
-
-        CompanyRecord record = companyExist.get();
-
-        record.setCompanyName(name);
-        record.setCompanyDescription(description);
-
-        companyRepository.save(record);
-
-        return companyResponseFromRecord(record);
-
     }
 
 
-    public void deleteCompany(String id) {
-        companyRepository.deleteById(id);
+    public void deleteCompany(String companyId) {
+        companyRepository.deleteById(companyId);
+        cacheStore.evict(companyId);
     }
 
 

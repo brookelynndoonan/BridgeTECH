@@ -1,9 +1,12 @@
 package com.kenzie.appserver.controller;
 
+import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.repositories.model.CompanyRecord;
 import com.kenzie.appserver.service.CompaniesService;
+import com.kenzie.appserver.service.model.Career;
+import com.kenzie.appserver.service.model.Companies;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +37,16 @@ public class CompanyController {
         return ResponseEntity.created(URI.create("/companies/" + response.getCompanyId())).body(response);
     }
 
-    @PostMapping("/{Id}")
-    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable("Id")
-                                                         @RequestBody CompanyRequest companyRequest) {
-        CompanyResponse response = companiesService.updateCompany(companyRequest.getCompanyName(),
-                companyRequest.getCompanyId(), companyRequest.getCompanyDescription());
+    @PutMapping
+    public ResponseEntity<CompanyResponse> updateCompany(@RequestBody CompanyRequest companyRequest) {
+        Companies companies = new Companies(companyRequest.getCompanyId(),
+        companyRequest.getCompanyDescription(),
+        companyRequest.getCompanyName());
+        companiesService.updateCompany(companies);
 
-        return ResponseEntity.ok(response);
+        CompanyResponse companyResponse = createCompanyResponse(companies);
+
+        return ResponseEntity.ok(companyResponse);
     }
 
     @GetMapping
@@ -63,12 +69,15 @@ public class CompanyController {
         return ResponseEntity.ok(companies);
     }
 
-    @GetMapping("/company/{Id}")
+    @GetMapping("/{Id}")
     public ResponseEntity<CompanyResponse> searchCompanyById(@PathVariable("Id") String companyId) {
-        CompanyResponse companyResponse = companiesService.findCompanyById(companyId);
-        if (companyResponse == null) {
+        Companies companies = companiesService.findByCompaniesId(companyId);
+
+        if (companies == null) {
             return ResponseEntity.notFound().build();
         }
+
+        CompanyResponse companyResponse = createCompanyResponse(companies);
         return ResponseEntity.ok(companyResponse);
     }
 
@@ -85,6 +94,14 @@ public class CompanyController {
     public ResponseEntity deleteCompanyById(@PathVariable("Id") String companyId) {
         companiesService.deleteCompany(companyId);
         return ResponseEntity.ok().build();
+    }
+
+    private CompanyResponse createCompanyResponse(Companies company) {
+        CompanyResponse companyResponse = new CompanyResponse();
+        companyResponse.setCompanyName(company.getCompanyName());
+        companyResponse.setCompanyId(company.getCompanyId());
+        companyResponse.setCompanyDescription(company.getCompanyDescription());
+        return companyResponse;
     }
 }
 

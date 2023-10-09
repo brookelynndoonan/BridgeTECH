@@ -4,6 +4,7 @@ import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryReq
 import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryResponse;
 import com.kenzie.appserver.repositories.model.IndustriesRecord;
 import com.kenzie.appserver.service.IndustriesService;
+import com.kenzie.appserver.service.model.Industries;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +35,14 @@ public class IndustryController {
         return ResponseEntity.created(URI.create("/industries/" + response.getIndustryId())).body(response);
     }
 
-    @PostMapping("/{Id}")
+    /*@PostMapping("/{Id}")
     public ResponseEntity<IndustryResponse> updateIndustry(@PathVariable("Id")
                                                            @RequestBody IndustryRequest industryRequest) {
         IndustryResponse response = industriesService.updateIndustry(industryRequest.getIndustryName(),
                 industryRequest.getIndustryId(), industryRequest.getIndustryDescription());
 
         return ResponseEntity.ok(response);
-    }
+    }*/
 
     @GetMapping
     public ResponseEntity<List<IndustryResponse>> getAllIndustries() {
@@ -63,17 +64,20 @@ public class IndustryController {
         return ResponseEntity.ok(industries);
     }
 
-    @GetMapping("/industry/{Id}")
-    public ResponseEntity<IndustryResponse> searchIndustryById(@PathVariable("Id") String industryId) {
-        IndustryResponse industryResponse = industriesService.findIndustryById(industryId);
-        if (industryResponse == null) {
+    @GetMapping("/{Id}")
+    public ResponseEntity<IndustryResponse> searchIndustryById(@PathVariable String Id) {
+        Industries industry = industriesService.findByIndustriesId(Id);
+
+        if (industry == null) {
             return ResponseEntity.notFound().build();
         }
+
+        IndustryResponse industryResponse = createIndustryResponse(industry);
         return ResponseEntity.ok(industryResponse);
     }
 
-    @GetMapping("/industryName/{IndustryName}")
-    public ResponseEntity<IndustriesRecord> searchIndustryByName(@PathVariable("IndustryName") String industryName) {
+    @GetMapping("/industryName/{industryName}")
+    public ResponseEntity<IndustriesRecord> searchIndustryByName(@PathVariable("industryName") String industryName) {
         IndustriesRecord industriesRecord = industriesService.findIndustryByName(industryName);
         if (industriesRecord == null) {
             return ResponseEntity.notFound().build();
@@ -85,6 +89,14 @@ public class IndustryController {
     public ResponseEntity deleteIndustryById(@PathVariable("Id") String industryId) {
         industriesService.deleteIndustry(industryId);
         return ResponseEntity.ok().build();
+    }
+
+    private IndustryResponse createIndustryResponse(Industries industries) {
+        IndustryResponse industryResponse = new IndustryResponse();
+        industryResponse.setIndustryId(industries.getIndustryId());
+        industryResponse.setIndustryName(industries.getIndustryName());
+        industryResponse.setIndustryDescription(industries.getIndustryDescription());
+        return industryResponse;
     }
 }
 
