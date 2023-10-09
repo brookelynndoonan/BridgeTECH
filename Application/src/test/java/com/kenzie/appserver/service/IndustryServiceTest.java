@@ -1,9 +1,19 @@
 package com.kenzie.appserver.service;
 
+import com.kenzie.appserver.config.CacheStoreCareer;
+import com.kenzie.appserver.config.CacheStoreCompanies;
+import com.kenzie.appserver.config.CacheStoreIndustries;
+import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
+import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryRequest;
 import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryResponse;
+import com.kenzie.appserver.repositories.CompanyRepository;
 import com.kenzie.appserver.repositories.IndustryRepository;
+import com.kenzie.appserver.repositories.model.CompanyRecord;
 import com.kenzie.appserver.repositories.model.IndustriesRecord;
+import com.kenzie.appserver.service.model.Career;
+import com.kenzie.appserver.service.model.Companies;
+import com.kenzie.appserver.service.model.Industries;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,65 +25,81 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class IndustryServiceTest {
-
     private IndustryRepository industryRepository;
-    private IndustriesService industriesService;
+    private IndustriesService industryService;
+    private CacheStoreIndustries cacheStore;
 
     @BeforeEach
     void setup() {
         industryRepository = mock(IndustryRepository.class);
-        industriesService = new IndustriesService(industryRepository);
+        cacheStore = mock(CacheStoreIndustries.class);
+        industryService = new IndustriesService(industryRepository, cacheStore);
     }
 
     @Test
-    void findIndustryById_isValid_returnsIndustry() {
+    void findByIndustryId() {
         // GIVEN
-        String id = randomUUID().toString();
+        String industryId = randomUUID().toString();
 
         IndustriesRecord record = new IndustriesRecord();
-        record.setIndustryId(id);
-        record.setIndustryName("Industry Name");
+        record.setIndustryId(industryId);
+        record.setIndustryName("industryName");
+        record.setIndustryDescription("industryDescription");
 
+        when(industryRepository.findById(industryId)).thenReturn(Optional.of(record));
         // WHEN
-        when(industryRepository.findById(id)).thenReturn(Optional.of(record));
-        IndustryResponse industry = industriesService.findIndustryById(id);
+        Industries industries = industryService.findByIndustriesId(industryId);
 
         // THEN
-        Assertions.assertNotNull(industry, "The object is returned");
-        assertEquals(record.getIndustryId(), industry.getIndustryId(), "The id matches");
-        assertEquals(record.getIndustryName(), industry.getIndustryName(), "The name matches");
+        Assertions.assertNotNull(industries, "The industry is returned");
+        Assertions.assertEquals(record.getIndustryId(), industries.getIndustryId(), "The Industry Id matches");
+        Assertions.assertEquals(record.getIndustryName(), industries.getIndustryName(), "The Industry name matches");
+        Assertions.assertEquals(record.getIndustryDescription(), industries.getIndustryDescription(), "The Industry description matches");
     }
 
     @Test
-    void findByIndustryId_isInvalid_assertsNull() {
+    void findByIndustryId_isNull_returnsNothing() {
         // GIVEN
-        String id = randomUUID().toString();
+        String industryId = randomUUID().toString();
 
-        when(industryRepository.findById(id)).thenReturn(Optional.empty());
-
+        when(industryRepository.findById(industryId)).thenReturn(Optional.empty());
         // WHEN
-        IndustryResponse industry = industriesService.findIndustryById(id);
+        Industries industries = industryService.findByIndustriesId(industryId);
 
         // THEN
-        Assertions.assertNull(industry, "The industry is null when not found");
+        Assertions.assertNull(industries);
+    }
+
+    @Test
+    void findByIndustryId_cacheNotNull_returnCachedIndustry(){
+
+        String industryId = randomUUID().toString();
+        Industries industries = new Industries("industryName","industryDescription",
+                industryId);
+
+        when(cacheStore.get(industryId)).thenReturn(industries);
+
+        Industries actualIndustries = industryService.findByIndustriesId(industryId);
+
+        Assertions.assertEquals(industries, actualIndustries);
     }
 
     @Test
     void findAllIndustries_isValid_returnsListOfIndustries() {
         // GIVEN
         IndustriesRecord record1 = new IndustriesRecord();
-        record1.setIndustryId(randomUUID().toString());
+        record1.setIndustryId(UUID.randomUUID().toString());
         record1.setIndustryName("industryName1");
 
         IndustriesRecord record2 = new IndustriesRecord();
-        record2.setIndustryId(randomUUID().toString());
+        record2.setIndustryId(UUID.randomUUID().toString());
         record2.setIndustryName("industryName2");
 
         List<IndustriesRecord> recordList = new ArrayList<>();
@@ -82,7 +108,7 @@ public class IndustryServiceTest {
         when(industryRepository.findAll()).thenReturn(recordList);
 
         // WHEN
-        List<IndustryResponse> industries = industriesService.findAllIndustries();
+        List<IndustryResponse> industries = industryService.findAllIndustries();
 
         // THEN
         Assertions.assertNotNull(industries, "The industries list is returned");
@@ -112,7 +138,7 @@ public class IndustryServiceTest {
 
         // WHEN
         when(industryRepository.findIndustryByName(industryName)).thenReturn(record);
-        IndustriesRecord industry = industriesService.findIndustryByName(industryName);
+        IndustriesRecord industry = industryService.findIndustryByName(industryName);
 
         // THEN
         Assertions.assertNotNull(industry, "The object is returned");
@@ -124,19 +150,21 @@ public class IndustryServiceTest {
 
         when(industryRepository.findIndustryByName(null)).thenReturn(null);
 
-        Assertions.assertNull(industriesService.findIndustryByName(null));
+        Assertions.assertNull(industryService.findIndustryByName(null));
 
     }
 
     @Test
     void findAllIndustriesByName_isValid_returnsListOfIndustries() {
-        List<IndustriesRecord> industryRecords = new ArrayList<>();
-        industryRecords.add(new IndustriesRecord());
-        when(industryRepository.findByIndustryName(anyString())).thenReturn(industryRecords);
 
-        List<IndustryResponse> result = industriesService.findAllIndustriesByName("IndustryName");
+        List<IndustriesRecord> industriesRecords = new ArrayList<>();
+        industriesRecords.add(new IndustriesRecord());
+        when(industryRepository.findByIndustryName(anyString())).thenReturn(industriesRecords);
 
-        assertEquals(industryRecords.size(), result.size());
+        List<IndustryResponse> result = industryService.findAllIndustriesByName("IndustryName");
+
+        assertEquals(industriesRecords.size(), result.size());
+
     }
 
     @Test
@@ -149,7 +177,7 @@ public class IndustryServiceTest {
         ArgumentCaptor<IndustriesRecord> industryRecordCaptor = ArgumentCaptor.forClass(IndustriesRecord.class);
 
         // WHEN
-        IndustryResponse returnedIndustry = industriesService.addNewIndustry(request);
+        IndustryResponse returnedIndustry = industryService.addNewIndustry(request);
 
         // THEN
         Assertions.assertNotNull(returnedIndustry);
@@ -164,55 +192,45 @@ public class IndustryServiceTest {
     }
 
     @Test
-    void updateIndustry_isValid_industryIsSuccessfullyUpdated() {
+    void updateIndustryById_validId_ifIdExistsUpdateIndustry(){
         // GIVEN
         String industryId = randomUUID().toString();
 
-        IndustriesRecord oldIndustryRecord = new IndustriesRecord();
-        oldIndustryRecord.setIndustryId(industryId);
-        oldIndustryRecord.setIndustryName("oldIndustryName");
-        oldIndustryRecord.setIndustryDescription("Gatekeep of the Bifröst between Earth and realm of the Gods");
+        Industries industries = new Industries("inustryName", "industryDescription",
+                industryId);
 
-        String newIndustryName = "newName";
-        String newIndustryDescription = "newIndustryDescription";
-
-        when(industryRepository.findById(industryId)).thenReturn(Optional.of(oldIndustryRecord));
-
-        ArgumentCaptor<IndustriesRecord> industryRecordCaptor = ArgumentCaptor.forClass(IndustriesRecord.class);
+        ArgumentCaptor<IndustriesRecord> industriesRecordCaptor = ArgumentCaptor.forClass(IndustriesRecord.class);
 
         // WHEN
-        industriesService.updateIndustry(industryId, newIndustryName, newIndustryDescription);
+        when(industryRepository.existsById(industryId)).thenReturn(true);
+        industryService.updateIndustry(industries);
 
         // THEN
-        verify(industryRepository).save(industryRecordCaptor.capture());
+        verify(industryRepository).existsById(industryId);
+        verify(industryRepository).save(industriesRecordCaptor.capture());
+        IndustriesRecord industriesRecord = industriesRecordCaptor.getValue();
 
-        IndustriesRecord record = industryRecordCaptor.getValue();
-
-        Assertions.assertNotNull(record, "The industry record is returned");
-        assertEquals(record.getIndustryId(), industryId, "The industry id matches");
-        assertEquals(record.getIndustryName(), newIndustryName, "The industry name matches");
-        assertEquals(record.getIndustryDescription(), newIndustryDescription,
-                "The industries description matches");
+        Assertions.assertEquals(industries.getIndustryId(), industriesRecord.getIndustryId());
+        Assertions.assertEquals(industries.getIndustryName(), industriesRecord.getIndustryName());
+        Assertions.assertEquals(industries.getIndustryDescription(), industriesRecord.getIndustryDescription());
     }
 
     @Test
-    void updateIndustry_does_not_exist() {
-        // GIVEN
+    void updateIndustryById_ifIdNull_ifIdDoesNotExistReturnNull(){
         String industryId = randomUUID().toString();
 
-        when(industryRepository.findById(industryId)).thenReturn(Optional.empty());
+        Industries industries = new Industries("industryName", "industryDescription",
+                industryId);
 
         // WHEN
-        Assertions.assertThrows(ResponseStatusException.class, () -> industriesService.updateIndustry(industryId,
-                "newName", "newIndustryDescription"));
+        when(industryRepository.existsById(industryId)).thenReturn(false);
+        industryService.updateIndustry(industries);
+
 
         // THEN
-        try {
-            verify(industryRepository, never()).save(Matchers.any());
-        } catch (MockitoAssertionError error) {
-            throw new MockitoAssertionError("There should not be a call to .save() if the industry" +
-                    " is not found in the database. - " + error);
-        }
+        verify(industryRepository).existsById(industryId);
+        verify(industryRepository, times(0)).save(any());
+
     }
 
     @Test
@@ -220,10 +238,11 @@ public class IndustryServiceTest {
         String industryId = randomUUID().toString();
 
         // WHEN
-        industriesService.deleteIndustry(industryId);
+        industryService.deleteIndustry(industryId);
 
         // THEN
         verify(industryRepository).deleteById(industryId);
 
     }
 }
+

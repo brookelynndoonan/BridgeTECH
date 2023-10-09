@@ -1,6 +1,6 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStore;
+import com.kenzie.appserver.config.CacheStoreCareer;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
@@ -14,7 +14,7 @@ import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccountRecord;
 import com.kenzie.capstone.service.model.UserAccounts;
 import com.kenzie.capstone.service.model.UserAccountsRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,18 +26,17 @@ import java.util.UUID;
 
 @Service
 public class CareerService {
-    private final CacheStore cache;
+    private final CacheStoreCareer cache;
     private final CareerRepository careerRepository;
     private final UserAccountRepository userAccountRepository;
     private final LambdaServiceClient lambdaServiceClient;
 
-    @Autowired
+
     public CareerService(
             CareerRepository careerRepository,
             UserAccountRepository userAccountRepository,
             LambdaServiceClient lambdaServiceClient,
-            CacheStore cache
-    ) {
+            CacheStoreCareer cache) {
         this.cache = cache;
         this.careerRepository = careerRepository;
         this.userAccountRepository = userAccountRepository;
@@ -48,7 +47,7 @@ public class CareerService {
         List<Career> careers = new ArrayList<>();
 
         Iterable<CareerRecord> careerIterator = careerRepository.findAll();
-        for(CareerRecord record : careerIterator) {
+        for (CareerRecord record : careerIterator) {
             careers.add(new Career(record.getId(),
                     record.getCareerName(),
                     record.getLocation(),
@@ -59,16 +58,6 @@ public class CareerService {
         return careers;
     }
 
-  /*  public CareerResponse findCareerById(String id) {
-
-        CareerResponse careerInfo = careerRepository
-                .findById(id)
-                .map(this::createCareerResponseFromRecord)
-                .orElse(null);
-
-        return careerInfo;
-    }*/
-
     public Career findCareerById(String Id) {
         Career cachedCareer = cache.get(Id);
         if (cachedCareer != null) {
@@ -78,16 +67,14 @@ public class CareerService {
                 .findById(Id)
                 .map(career -> new Career(career.getId(),
                         career.getCareerName(),
-                        career.getJobDescription(),
                         career.getLocation(),
+                        career.getJobDescription(),
                         career.getCompanyDescription()))
                 .orElse(null);
 
-        // if concert found, cache it
         if (careerFromBackendService != null) {
             cache.add(careerFromBackendService.getId(), careerFromBackendService);
         }
-        // return concert
         return careerFromBackendService;
     }
 
@@ -148,35 +135,36 @@ public class CareerService {
             return null;
         }
     }
-  public UserAccountInCareerResponse createUser(UserAccountInCareerRequest createUserRequest) {
 
-      UserAccountRecord userAccountRecord = new UserAccountRecord();
-      userAccountRecord.setName(createUserRequest.getUserName());
-      userAccountRecord.setId(createUserRequest.getUserId());
-      userAccountRecord.setAccountType(createUserRequest.getAccountType());
-      userAccountRecord.setPassword(createUserRequest.getPassword());
-      userAccountRecord.setEmail(createUserRequest.getEmail());
+    public UserAccountInCareerResponse createUser(UserAccountInCareerRequest createUserRequest) {
 
-      userAccountRepository.save(userAccountRecord);
+        UserAccountRecord userAccountRecord = new UserAccountRecord();
+        userAccountRecord.setName(createUserRequest.getUserName());
+        userAccountRecord.setId(createUserRequest.getUserId());
+        userAccountRecord.setAccountType(createUserRequest.getAccountType());
+        userAccountRecord.setPassword(createUserRequest.getPassword());
+        userAccountRecord.setEmail(createUserRequest.getEmail());
 
-      UserAccountsRequest userAccountsRequest = new UserAccountsRequest();
-      userAccountsRequest.setUserName(userAccountRecord.getName());
-      userAccountsRequest.setAccountType(userAccountRecord.getAccountType());
-      userAccountsRequest.setEmail(userAccountRecord.getEmail());
-      userAccountsRequest.setPassword(userAccountRecord.getPassword());
-      userAccountsRequest.setUserId(userAccountRecord.getId());
+        userAccountRepository.save(userAccountRecord);
 
-      lambdaServiceClient.setUserAccounts(userAccountsRequest);
+        UserAccountsRequest userAccountsRequest = new UserAccountsRequest();
+        userAccountsRequest.setUserName(userAccountRecord.getName());
+        userAccountsRequest.setAccountType(userAccountRecord.getAccountType());
+        userAccountsRequest.setEmail(userAccountRecord.getEmail());
+        userAccountsRequest.setPassword(userAccountRecord.getPassword());
+        userAccountsRequest.setUserId(userAccountRecord.getId());
 
-      UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
-      userAccountInCareerResponse.setUserId(createUserRequest.getUserId());
-      userAccountInCareerResponse.setUserName(createUserRequest.getUserName());
-      userAccountInCareerResponse.setAccountType(createUserRequest.getAccountType());
-      userAccountInCareerResponse.setPassword(createUserRequest.getPassword());
-      userAccountInCareerResponse.setEmail(createUserRequest.getEmail());
+        lambdaServiceClient.setUserAccounts(userAccountsRequest);
 
-      return userAccountInCareerResponse;
-  }
+        UserAccountInCareerResponse userAccountInCareerResponse = new UserAccountInCareerResponse();
+        userAccountInCareerResponse.setUserId(createUserRequest.getUserId());
+        userAccountInCareerResponse.setUserName(createUserRequest.getUserName());
+        userAccountInCareerResponse.setAccountType(createUserRequest.getAccountType());
+        userAccountInCareerResponse.setPassword(createUserRequest.getPassword());
+        userAccountInCareerResponse.setEmail(createUserRequest.getEmail());
+
+        return userAccountInCareerResponse;
+    }
 
 
     // PRIVATE HELPER METHODS

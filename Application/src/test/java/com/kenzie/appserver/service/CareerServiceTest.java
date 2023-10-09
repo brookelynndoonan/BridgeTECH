@@ -1,19 +1,24 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStore;
+import com.kenzie.appserver.config.CacheStoreCareer;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerResponse;
 import com.kenzie.appserver.repositories.CareerRepository;
 import com.kenzie.appserver.repositories.UserAccountRepository;
 import com.kenzie.appserver.repositories.model.CareerRecord;
+import com.kenzie.appserver.service.model.Career;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
@@ -25,64 +30,33 @@ public class CareerServiceTest {
     private CareerService careerService;
     private LambdaServiceClient lambdaServiceClient;
     private UserAccountRepository userAccountRepository;
-    private CacheStore cacheStore;
-
-    public CareerServiceTest(UserAccountRepository userAccountRepository, CacheStore cacheStore) {
-        this.userAccountRepository = userAccountRepository;
-        this.cacheStore = cacheStore;
-    }
+    private CacheStoreCareer cache;
 
     @BeforeEach
     void setup() {
         careerRepository = mock(CareerRepository.class);
         lambdaServiceClient = mock(LambdaServiceClient.class);
-        cacheStore = mock((CacheStore.class));
-        careerService = new CareerService(careerRepository, userAccountRepository, lambdaServiceClient,cacheStore);
+        userAccountRepository = mock(UserAccountRepository.class);
+        cache = mock((CacheStoreCareer.class));
+        careerService = new CareerService(careerRepository, userAccountRepository, lambdaServiceClient, cache);
     }
 
-  /*  @Test
-    void findCareerById_isValid_returnsCareer() {
-        // GIVEN
-        String id = randomUUID().toString();
-
-        CareerRecord record = new CareerRecord();
-        record.setId(id);
-        record.setCareerName("Career Name");
-
-        // WHEN
-        when(careerRepository.findById(id)).thenReturn(Optional.of(record));
-        CareerResponse career = careerService.findCareerById(id);
-
-        // THEN
-        Assertions.assertNotNull(career, "The object is returned");
-        assertEquals(record.getId(), career.getId(), "The id matches");
-        assertEquals(record.getCareerName(), career.getName(), "The name matches");
-    }*/
-
-   /* @Test
-    void findByCareerId_isInvalid_assertsNull() {
-        // GIVEN
-        String id = randomUUID().toString();
-
-        when(careerRepository.findById(id)).thenReturn(Optional.empty());
-
-        // WHEN
-        CareerResponse career = careerService.findCareerById(id);
-
-        // THEN
-        Assertions.assertNull(career, "The career is null when not found");
-    }*/
-
- /*   @Test
-    void findAllCareers_isValid_returnsListOfCareers() {
+    @Test
+    void findAllCareers_twoCareers_isValid() {
         // GIVEN
         CareerRecord record1 = new CareerRecord();
         record1.setId(randomUUID().toString());
-        record1.setCareerName("careerName1");
+        record1.setCareerName("career1");
+        record1.setLocation("location1");
+        record1.setJobDescription("jobDescription1");
+        record1.setCompanyDescription("companyDescription1");
 
         CareerRecord record2 = new CareerRecord();
-        record2.setId(randomUUID().toString());
-        record2.setCareerName("careerName2");
+        record1.setId(randomUUID().toString());
+        record1.setCareerName("career2");
+        record1.setLocation("location2");
+        record1.setJobDescription("jobDescription2");
+        record1.setCompanyDescription("companyDescription2");
 
         List<CareerRecord> recordList = new ArrayList<>();
         recordList.add(record1);
@@ -90,24 +64,86 @@ public class CareerServiceTest {
         when(careerRepository.findAll()).thenReturn(recordList);
 
         // WHEN
-        List<CareerResponse> customers = careerService.findAllCareers();
+        List<Career> careers = careerService.findAllCareers();
 
         // THEN
-        Assertions.assertNotNull(customers, "The career list is returned");
-        assertEquals(2, customers.size(), "There are two careers");
+        Assertions.assertNotNull(careers, "The career list is returned");
+        Assertions.assertEquals(2, careers.size(), "There are two careers");
 
-        for (CareerResponse customer : customers) {
-            if (customer.getId().equals(record1.getId())) {
-                assertEquals(record1.getId(), customer.getId(), "The career id matches");
-                assertEquals(record1.getCareerName(), customer.getName(), "The career name matches");
-            } else if (customer.getId().equals(record2.getId())) {
-                assertEquals(record2.getId(), customer.getId(), "The career id matches");
-                assertEquals(record2.getCareerName(), customer.getName(), "The career name matches");
+        for (Career career : careers) {
+            if (Objects.equals(career.getId(), record1.getId())) {
+                Assertions.assertEquals(record1.getId(), career.getId(), "The career Id matches");
+                Assertions.assertEquals(record1.getCareerName(), career.getCareerName(), "The career name matches");
+                Assertions.assertEquals(record1.getLocation(), career.getLocation(), "The career location matches");
+                Assertions.assertEquals(record1.getJobDescription(), career.getJobDescription(),
+                        "The job description matches");
+                Assertions.assertEquals(record1.getCompanyDescription(), career.getCompanyDescription(),
+                        "The company description matches");
+
+            } else if (Objects.equals(career.getId(), record2.getId())) {
+                Assertions.assertEquals(record2.getId(), career.getId(), "The career Id matches");
+                Assertions.assertEquals(record2.getCareerName(), career.getCareerName(), "The career name matches");
+                Assertions.assertEquals(record2.getLocation(), career.getLocation(), "The location matches");
+                Assertions.assertEquals(record2.getJobDescription(), career.getJobDescription(),
+                        "The job description matches");
+                Assertions.assertEquals(record2.getCompanyDescription(), career.getCompanyDescription(),
+                        "The company description matches");
             } else {
                 Assertions.fail("Career returned that was not in the records!");
             }
         }
-    }*/
+    }
+
+    @Test
+    void findByCareerId() {
+        // GIVEN
+        String careerId = randomUUID().toString();
+
+        CareerRecord record = new CareerRecord();
+        record.setId(careerId);
+        record.setCareerName("Career Name");
+        record.setLocation("Location");
+        record.setJobDescription("Job Description");
+        record.setCompanyDescription("Company Description");
+        when(careerRepository.findById(careerId)).thenReturn(Optional.of(record));
+        // WHEN
+        Career career = careerService.findCareerById(careerId);
+
+        // THEN
+        Assertions.assertNotNull(career, "The career is returned");
+        Assertions.assertEquals(record.getId(), career.getId(), "The career id matches");
+        Assertions.assertEquals(record.getCareerName(), career.getCareerName(), "The career name matches");
+        Assertions.assertEquals(record.getLocation(), career.getLocation(), "The location matches");
+        Assertions.assertEquals(record.getJobDescription(), career.getJobDescription(), "The job description matches");
+        Assertions.assertEquals(record.getCompanyDescription(), career.getCompanyDescription(), "The company description matches");
+    }
+
+    @Test
+    void findByCareerId_isNull_returnsNothing() {
+        // GIVEN
+        String careerId = randomUUID().toString();
+
+        when(careerRepository.findById(careerId)).thenReturn(Optional.empty());
+        // WHEN
+        Career career = careerService.findCareerById(careerId);
+
+        // THEN
+        Assertions.assertNull(career);
+    }
+
+    @Test
+    void findByCareerId_cacheNotNull_returnCachedCareer(){
+
+        String careerId = randomUUID().toString();
+        Career career = new Career(careerId, "career name", "location",
+                "jobDescription", "companyDescription");
+
+        when(cache.get(careerId)).thenReturn(career);
+
+        Career actualCareer = careerService.findCareerById(careerId);
+
+        Assertions.assertEquals(career, actualCareer);
+    }
 
     @Test
     void addNewCareer_isValid_careerIsAdded() {
@@ -134,65 +170,50 @@ public class CareerServiceTest {
         assertEquals(record.getCareerName(), careerName, "The career name matches");
     }
 
- /*   @Test
+    @Test
     void updateCareer_isValid_careerIsSuccessfullyUpdated() {
         // GIVEN
-        String customerId = randomUUID().toString();
+        String Id = randomUUID().toString();
 
-        CareerRecord oldCareerRecord = new CareerRecord();
-        oldCareerRecord.setId(customerId);
-        oldCareerRecord.setCareerName("oldCareerName");
-        oldCareerRecord.setLocation("Asgard");
-        oldCareerRecord.setCompanyDescription("Gatekeep of the Bifröst between Earth and realm of the Gods");
-        oldCareerRecord.setJobDescription("Protect Heimdall who is the gatekeeper of the Bifröst.");
+        Career career = new Career(Id, "careerName", "location",
+                "jobDescription", "companyDescription");
 
-        String newCareerName = "newName";
-        String newLocation = "newLocation";
-        String newCompanyDescription = "newCompanyDescription";
-        String newJobDescription = "newJobDescription";
-
-        when(careerRepository.findById(customerId)).thenReturn(Optional.of(oldCareerRecord));
-
-        ArgumentCaptor<CareerRecord> careerRecordCaptor = ArgumentCaptor.forClass(CareerRecord.class);
+        ArgumentCaptor<CareerRecord> careerRecordCaptor = ArgumentCaptor
+                .forClass(CareerRecord.class);
 
         // WHEN
-        careerService.updateCareer(customerId, newCareerName, newLocation, newJobDescription, newCompanyDescription);
+        when(careerRepository.existsById(Id)).thenReturn(true);
+        careerService.updateCareer(career);
 
         // THEN
+        verify(careerRepository).existsById(Id);
         verify(careerRepository).save(careerRecordCaptor.capture());
+        CareerRecord careerRecord = careerRecordCaptor.getValue();
 
-        CareerRecord record = careerRecordCaptor.getValue();
+        Assertions.assertEquals(career.getId(), careerRecord.getId());
+        Assertions.assertEquals(career.getCareerName(), careerRecord.getCareerName());
+        Assertions.assertEquals(career.getLocation(), careerRecord.getLocation());
+        Assertions.assertEquals(career.getCompanyDescription(), careerRecord.getCompanyDescription());
+        Assertions.assertEquals(career.getJobDescription(), careerRecord.getJobDescription());
+    }
 
-        Assertions.assertNotNull(record, "The career record is returned");
-        assertEquals(record.getId(), customerId, "The career id matches");
-        assertEquals(record.getCareerName(), newCareerName, "The career name matches");
-        assertEquals(record.getLocation(), newLocation, "The career location matches");
-        assertEquals(record.getCompanyDescription(), newCompanyDescription,
-                "The company description matches");
-        assertEquals(record.getJobDescription(), newJobDescription, "The job description matches");
-    }*/
-
-/*    @Test
-    void updateCareer_does_not_exist() {
-        // GIVEN
+    @Test
+    void updateCareerById_ifIdNull_noExistingIdReturnNull() {
         String careerId = randomUUID().toString();
 
-        when(careerRepository.findById(careerId)).thenReturn(Optional.empty());
+        Career career = new Career(careerId, "careerName", "location", "jobDescription",
+                "companyDescription");
 
         // WHEN
-        assertThrows(ResponseStatusException.class, () -> careerService.updateCareer(careerId,
-                "newName", "newLocation", "newJobDescription",
-                "newCompanyDescription"));
+        when(careerRepository.existsById(careerId)).thenReturn(false);
+        careerService.updateCareer(career);
+
 
         // THEN
-        try {
-            verify(careerRepository, never()).save(Matchers.any());
-        } catch (MockitoAssertionError error) {
-            throw new MockitoAssertionError("There should not be a call to .save() if the career" +
-                    " is not found in the database. - " + error);
-        }
+        verify(careerRepository).existsById(careerId);
+        verify(careerRepository, times(0)).save(any());
 
-    }*/
+    }
 
     @Test
     void deleteCareer_idMatches_isSuccessful() {
@@ -252,7 +273,7 @@ public class CareerServiceTest {
         verify(careerRepository, never()).deleteById(careerId);
     }
 
-/*    @Test
+   /* @Test
     void getUsers_isValid_byUserId() {
         // GIVEN
         UserAccounts fakeAccount = new UserAccounts();

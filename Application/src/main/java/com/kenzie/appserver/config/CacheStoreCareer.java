@@ -6,33 +6,31 @@ import com.kenzie.appserver.service.model.Career;
 
 import java.util.concurrent.TimeUnit;
 
-public class CacheStore {
+public class CacheStoreCareer {
     private final Cache<String, Career> cache;
 
-    public CacheStore(int expiry, TimeUnit timeUnit) {
-        // initalize the cache
+    public CacheStoreCareer(int expiry, TimeUnit timeUnit) {
+
         this.cache = CacheBuilder.newBuilder()
                 .expireAfterWrite(expiry, timeUnit)
                 .concurrencyLevel(Runtime.getRuntime().availableProcessors())
-                .build();    
+                .build();
     }
 
     public Career get(String key) {
-        // Write your code here
-        // Retrieve and return the concert
+
         return cache.getIfPresent(key);
     }
 
     public void evict(String key) {
-        // Write your code here
-        // Invalidate/evict the concert from cache
+
         cache.invalidate(key);
 
     }
 
     public void add(String key, Career value) {
-        // Write your code here
-        // Add concert to cache
+
         cache.put(key, value);
     }
+
 }

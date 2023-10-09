@@ -1,9 +1,13 @@
 package com.kenzie.appserver.service;
 
+import com.kenzie.appserver.config.CacheStoreCareer;
+import com.kenzie.appserver.config.CacheStoreCompanies;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.repositories.CompanyRepository;
 import com.kenzie.appserver.repositories.model.CompanyRecord;
+import com.kenzie.appserver.service.model.Career;
+import com.kenzie.appserver.service.model.Companies;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,45 +27,62 @@ import static org.mockito.Mockito.*;
 public class CompanyServiceTest {
     private CompanyRepository companyRepository;
     private CompaniesService companiesService;
+    private CacheStoreCompanies cacheStore;
 
     @BeforeEach
     void setup() {
         companyRepository = mock(CompanyRepository.class);
-        companiesService = new CompaniesService(companyRepository);
+        cacheStore = mock(CacheStoreCompanies.class);
+        companiesService = new CompaniesService(companyRepository, cacheStore);
     }
 
     @Test
-    void findCompanyById_isValid_returnsCompany() {
+    void findByCompanyId() {
         // GIVEN
-        String id = randomUUID().toString();
+        String companyId = randomUUID().toString();
 
         CompanyRecord record = new CompanyRecord();
-        record.setCompanyId(id);
-        record.setCompanyName("Company Name");
+        record.setCompanyId(companyId);
+        record.setCompanyName("companyName");
+        record.setCompanyDescription("companyDescription");
 
+        when(companyRepository.findById(companyId)).thenReturn(Optional.of(record));
         // WHEN
-        when(companyRepository.findById(id)).thenReturn(Optional.of(record));
-        CompanyResponse company = companiesService.findCompanyById(id);
+        Companies companies = companiesService.findByCompaniesId(companyId);
 
         // THEN
-        Assertions.assertNotNull(company, "The object is returned");
-        assertEquals(record.getCompanyId(), company.getCompanyId(), "The id matches");
-        assertEquals(record.getCompanyName(), company.getCompanyName(), "The name matches");
+        Assertions.assertNotNull(companies, "The company is returned");
+        Assertions.assertEquals(record.getCompanyId(), companies.getCompanyId(), "The company Id matches");
+        Assertions.assertEquals(record.getCompanyName(), companies.getCompanyName(), "The company name matches");
+        Assertions.assertEquals(record.getCompanyDescription(), companies.getCompanyDescription(), "The company description matches");
     }
 
     @Test
-    void findByCompanyId_isInvalid_assertsNull() {
+    void findByCompanyId_isNull_returnsNothing() {
         // GIVEN
-        String id = randomUUID().toString();
+        String companyId = randomUUID().toString();
 
-        when(companyRepository.findById(id)).thenReturn(Optional.empty());
-
+        when(companyRepository.findById(companyId)).thenReturn(Optional.empty());
         // WHEN
-        CompanyResponse company = companiesService.findCompanyById(id);
+        Companies companies = companiesService.findByCompaniesId(companyId);
 
         // THEN
-        Assertions.assertNull(company, "The company is null when not found");
+        Assertions.assertNull(companies);
     }
+
+    @Test
+    void findByCompanyId_cacheNotNull_returnCachedCompany(){
+
+            String companyId = randomUUID().toString();
+            Companies companies = new Companies("companyName","companyDescription",
+                    companyId);
+
+            when(cacheStore.get(companyId)).thenReturn(companies);
+
+            Companies actualCompanies = companiesService.findByCompaniesId(companyId);
+
+            Assertions.assertEquals(companies, actualCompanies);
+        }
 
     @Test
     void findAllCompanies_isValid_returnsListOfCompanies() {
@@ -128,17 +149,14 @@ public class CompanyServiceTest {
 
     @Test
     void findAllCompaniesByName_isValid_returnsListOfCompanies() {
-        // Arrange
+
         List<CompanyRecord> companyRecords = new ArrayList<>();
         companyRecords.add(new CompanyRecord());
         when(companyRepository.findByCompanyName(anyString())).thenReturn(companyRecords);
 
-        // Act
         List<CompanyResponse> result = companiesService.findAllCompaniesByName("CompanyName");
 
-        // Assert
         assertEquals(companyRecords.size(), result.size());
-        // You can add more assertions to verify the correctness of the mapping and response objects.
     }
 
     @Test
@@ -166,55 +184,44 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void updateCareer_isValid_careerIsSuccessfullyUpdated() {
+    void updateCompanyById_validId_ifIdExistsUpdateCompany(){
         // GIVEN
         String companyId = randomUUID().toString();
 
-        CompanyRecord oldCompanyRecord = new CompanyRecord();
-        oldCompanyRecord.setCompanyId(companyId);
-        oldCompanyRecord.setCompanyName("oldCompanyName");
-        oldCompanyRecord.setCompanyDescription("Gatekeep of the Bifröst between Earth and realm of the Gods");
-
-        String newCompanyName = "newName";
-        String newCompanyDescription = "newCompanyDescription";
-
-        when(companyRepository.findById(companyId)).thenReturn(Optional.of(oldCompanyRecord));
+        Companies companies = new Companies(companyId, "companyDescription", companyId);
 
         ArgumentCaptor<CompanyRecord> companyRecordCaptor = ArgumentCaptor.forClass(CompanyRecord.class);
 
         // WHEN
-        companiesService.updateCompany(companyId, newCompanyName, newCompanyDescription);
+        when(companyRepository.existsById(companyId)).thenReturn(true);
+        companiesService.updateCompany(companies);
 
         // THEN
+        verify(companyRepository).existsById(companyId);
         verify(companyRepository).save(companyRecordCaptor.capture());
+        CompanyRecord companyRecord = companyRecordCaptor.getValue();
 
-        CompanyRecord record = companyRecordCaptor.getValue();
-
-        Assertions.assertNotNull(record, "The company record is returned");
-        assertEquals(record.getCompanyId(), companyId, "The company id matches");
-        assertEquals(record.getCompanyName(), newCompanyName, "The company name matches");
-        assertEquals(record.getCompanyDescription(), newCompanyDescription,
-                "The company description matches");
+        Assertions.assertEquals(companies.getCompanyId(), companyRecord.getCompanyId());
+        Assertions.assertEquals(companies.getCompanyName(), companyRecord.getCompanyName());
+        Assertions.assertEquals(companies.getCompanyDescription(), companyRecord.getCompanyDescription());
     }
 
     @Test
-    void updateCompany_does_not_exist() {
-        // GIVEN
+    void updateCompanyById_ifIdNull_ifIdDoesNotExistReturnNull(){
         String companyId = randomUUID().toString();
 
-        when(companyRepository.findById(companyId)).thenReturn(Optional.empty());
+        Companies companies = new Companies("companyName", "companyDescription",
+                companyId);
 
         // WHEN
-        Assertions.assertThrows(ResponseStatusException.class, () -> companiesService.updateCompany(companyId,
-                "newName", "newCompanyDescription"));
+        when(companyRepository.existsById(companyId)).thenReturn(false);
+        companiesService.updateCompany(companies);
+
 
         // THEN
-        try {
-            verify(companyRepository, never()).save(Matchers.any());
-        } catch (MockitoAssertionError error) {
-            throw new MockitoAssertionError("There should not be a call to .save() if the company" +
-                    " is not found in the database. - " + error);
-        }
+        verify(companyRepository).existsById(companyId);
+        verify(companyRepository, times(0)).save(any());
+
     }
 
     @Test
