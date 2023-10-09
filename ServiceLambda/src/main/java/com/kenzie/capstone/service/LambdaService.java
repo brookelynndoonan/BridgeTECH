@@ -1,7 +1,6 @@
 package com.kenzie.capstone.service;
 
 import com.kenzie.capstone.service.convertor.UserAccountConvertor;
-import com.kenzie.capstone.service.dao.ExampleDao;
 import com.kenzie.capstone.service.dao.UserAccountsDao;
 import com.kenzie.capstone.service.model.*;
 
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 
 public class LambdaService {
 
-    private ExampleDao exampleDao;
     private UserAccountsDao userAccountsDao;
 
     /* @Inject
@@ -29,20 +27,6 @@ public class LambdaService {
     @Inject
     public LambdaService(UserAccountsDao userAccountsDao) {
         this.userAccountsDao = userAccountsDao;
-    }
-
-    public ExampleData getExampleData(String id) {
-        List<ExampleRecord> records = exampleDao.getExampleData(id);
-        if (records.size() > 0) {
-            return new ExampleData(records.get(0).getId(), records.get(0).getData());
-        }
-        return null;
-    }
-
-    public ExampleData setExampleData(String data) {
-        String id = UUID.randomUUID().toString();
-        ExampleRecord record = exampleDao.setExampleData(id, data);
-        return new ExampleData(id, data);
     }
 
     public UserAccounts getUserAccounts(String id) {
