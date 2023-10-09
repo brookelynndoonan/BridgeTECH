@@ -77,7 +77,7 @@ Resources:
         UpdateResource:
           Type: Api
           Properties:
-            Path: /useraccount/
+            Path: /user
             Method: post
   GetUserAccountsFunction:
     Type: AWS::Serverless::Function
@@ -101,6 +101,6 @@ Resources:
         UpdateResource:
           Type: Api
           Properties:
-            Path: /useraccount/{id}
+            Path: /user/{id}
             Method: get
 

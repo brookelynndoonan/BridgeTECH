@@ -60,9 +60,9 @@ public class CareerController {
 
     @GetMapping
     public ResponseEntity<List<CareerResponse>> getAllCareers() {
-        List<Career> career  = careerService.findAllCareers();
+        List<Career> career = careerService.findAllCareers();
 
-        if (career == null ||  career.isEmpty()) {
+        if (career == null || career.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
@@ -93,6 +93,7 @@ public class CareerController {
         return ResponseEntity.ok().build();
     }
 
+    // Blake Helped me write this method.
     @GetMapping("/userAccounts/user/{Id}")
     public ResponseEntity<UserAccountInCareerResponse> getUserAccounts(@PathVariable("Id") String Id) {
         UserAccountInCareerResponse userAccountInCareerResponse = careerService.getUsers(Id);
@@ -104,6 +105,7 @@ public class CareerController {
         return ResponseEntity.ok(userAccountInCareerResponse);
     }
 
+    // Blake Helped me write this method.
     @PostMapping("/userAccounts/user")
     public ResponseEntity<UserAccountInCareerResponse> createUser(@RequestBody UserAccountInCareerRequest userAccountInCareerRequest) {
         try {

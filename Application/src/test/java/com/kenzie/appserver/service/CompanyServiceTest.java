@@ -1,27 +1,23 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStoreCareer;
-import com.kenzie.appserver.config.CacheStoreCompanies;
+import com.kenzie.appserver.config.cachestore.CacheStoreCompanies;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
 import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
 import com.kenzie.appserver.repositories.CompanyRepository;
 import com.kenzie.appserver.repositories.model.CompanyRecord;
-import com.kenzie.appserver.service.model.Career;
 import com.kenzie.appserver.service.model.Companies;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
-import org.mockito.exceptions.base.MockitoAssertionError;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CompanyServiceTest {
@@ -71,18 +67,18 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void findByCompanyId_cacheNotNull_returnCachedCompany(){
+    void findByCompanyId_cacheNotNull_returnCachedCompany() {
 
-            String companyId = randomUUID().toString();
-            Companies companies = new Companies("companyName","companyDescription",
-                    companyId);
+        String companyId = randomUUID().toString();
+        Companies companies = new Companies("companyName", "companyDescription",
+                companyId);
 
-            when(cacheStore.get(companyId)).thenReturn(companies);
+        when(cacheStore.get(companyId)).thenReturn(companies);
 
-            Companies actualCompanies = companiesService.findByCompaniesId(companyId);
+        Companies actualCompanies = companiesService.findByCompaniesId(companyId);
 
-            Assertions.assertEquals(companies, actualCompanies);
-        }
+        Assertions.assertEquals(companies, actualCompanies);
+    }
 
     @Test
     void findAllCompanies_isValid_returnsListOfCompanies() {
@@ -122,42 +118,36 @@ public class CompanyServiceTest {
 
 
     @Test
-    void findCompanyByName_isValid_returnsCompany() {
-        // GIVEN
-        String companyName = "name";
+    void findAllCompaniesByName_ValidCompanyName_ReturnsListOfCompanies() {
+        CompanyRecord record1 = new CompanyRecord();
+        record1.setCompanyId(randomUUID().toString());
+        record1.setCompanyName("companyName1");
 
-        CompanyRecord record = new CompanyRecord();
-        record.setCompanyName("Company Name");
+        CompanyRecord record2 = new CompanyRecord();
+        record2.setCompanyId(randomUUID().toString());
+        record2.setCompanyName("companyName2");
 
-        // WHEN
-        when(companyRepository.findCompanyByName(companyName)).thenReturn(record);
-        CompanyRecord company = companiesService.findCompanyByName(companyName);
+        List<CompanyRecord> recordList = new ArrayList<>();
+        recordList.add(record1);
+        recordList.add(record2);
+        when(companyRepository.findAll()).thenReturn(recordList);
 
-        // THEN
-        Assertions.assertNotNull(company, "The object is returned");
-        assertEquals(record.getCompanyName(), company.getCompanyName(), "The name matches");
+        String companyNameToSearch = "companyName1";
+
+        List<CompanyResponse> result = companiesService.findAllCompaniesByName(companyNameToSearch);
+
+        verify(companyRepository, times(1)).findAll();
+
+        assertEquals(2, recordList.size());
+
+        List<String> companyResponseNames = result.stream()
+                .map(CompanyResponse::getCompanyName)
+                .collect(Collectors.toList());
+
+        assertTrue(companyResponseNames.contains("companyName1"));
+        assertFalse(companyResponseNames.contains("companyName2"));
     }
 
-    @Test
-    void findCompanyByName_isInvalid_returnsNull() {
-
-        when(companyRepository.findCompanyByName(null)).thenReturn(null);
-
-        Assertions.assertNull(companiesService.findCompanyByName(null));
-
-    }
-
-    @Test
-    void findAllCompaniesByName_isValid_returnsListOfCompanies() {
-
-        List<CompanyRecord> companyRecords = new ArrayList<>();
-        companyRecords.add(new CompanyRecord());
-        when(companyRepository.findByCompanyName(anyString())).thenReturn(companyRecords);
-
-        List<CompanyResponse> result = companiesService.findAllCompaniesByName("CompanyName");
-
-        assertEquals(companyRecords.size(), result.size());
-    }
 
     @Test
     void addNewCompany_isValid_companyIsAdded() {
@@ -184,7 +174,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void updateCompanyById_validId_ifIdExistsUpdateCompany(){
+    void updateCompanyById_validId_ifIdExistsUpdateCompany() {
         // GIVEN
         String companyId = randomUUID().toString();
 
@@ -207,7 +197,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void updateCompanyById_ifIdNull_ifIdDoesNotExistReturnNull(){
+    void updateCompanyById_ifIdNull_ifIdDoesNotExistReturnNull() {
         String companyId = randomUUID().toString();
 
         Companies companies = new Companies("companyName", "companyDescription",

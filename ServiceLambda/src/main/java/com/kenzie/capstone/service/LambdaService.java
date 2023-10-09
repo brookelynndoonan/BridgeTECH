@@ -12,18 +12,7 @@ import javax.inject.Inject;
 
 
 public class LambdaService {
-
-    private ExampleDao exampleDao;
     private UserAccountsDao userAccountsDao;
-
-    /* @Inject
-    public LambdaService(ExampleDao exampleDao) {
-        this.exampleDao = exampleDao;
-    }
-
-    */
-    //(UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage.
-    // Still need to test. still need to implement within our application service after testing is finish.)
 
 
     @Inject
@@ -31,19 +20,6 @@ public class LambdaService {
         this.userAccountsDao = userAccountsDao;
     }
 
-    public ExampleData getExampleData(String id) {
-        List<ExampleRecord> records = exampleDao.getExampleData(id);
-        if (records.size() > 0) {
-            return new ExampleData(records.get(0).getId(), records.get(0).getData());
-        }
-        return null;
-    }
-
-    public ExampleData setExampleData(String data) {
-        String id = UUID.randomUUID().toString();
-        ExampleRecord record = exampleDao.setExampleData(id, data);
-        return new ExampleData(id, data);
-    }
 
     public UserAccounts getUserAccounts(String id) {
         List<UserAccountRecord> records = userAccountsDao.getUserAccounts(id);

@@ -1,20 +1,14 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStoreCompanies;
-import com.kenzie.appserver.config.CacheStoreIndustries;
-import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyRequest;
-import com.kenzie.appserver.controller.model.CompanyRequestResponse.CompanyResponse;
+import com.kenzie.appserver.config.cachestore.CacheStoreIndustries;
 import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryRequest;
 import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryResponse;
-import com.kenzie.appserver.repositories.CompanyRepository;
 import com.kenzie.appserver.repositories.IndustryRepository;
-import com.kenzie.appserver.repositories.model.CompanyRecord;
 import com.kenzie.appserver.repositories.model.IndustriesRecord;
-import com.kenzie.appserver.service.model.Career;
-import com.kenzie.appserver.service.model.Companies;
 import com.kenzie.appserver.service.model.Industries;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,6 +23,7 @@ public class IndustriesService {
         this.industryRepository = industryRepository;
         this.cacheStore = cacheStore;
     }
+
     public List<IndustryResponse> findAllIndustries() {
 
         List<IndustriesRecord> recordList = StreamSupport.stream(industryRepository.findAll().spliterator(),
@@ -56,20 +51,17 @@ public class IndustriesService {
         return industriesFromBackendService;
     }
 
-    public IndustriesRecord findIndustryByName(String industryName) {
-
-        if (industryName != null) {
-
-            return industryRepository.findIndustryByName(industryName);
-        } else {
-            return null;
-        }
-    }
-
+    //Blake helped me write this method.
     public List<IndustryResponse> findAllIndustriesByName(String industryName) {
-        List<IndustriesRecord> recordList = industryRepository.findByIndustryName(industryName);
+        Iterable<IndustriesRecord> recordList = industryRepository.findAll();
 
-        return recordList.stream()
+        List<IndustriesRecord> industryList = new ArrayList<>();
+        for (IndustriesRecord industryRecord : recordList) {
+            if (industryRecord.getIndustryName().equals(industryName)) {
+                industryList.add(industryRecord);
+            }
+        }
+        return industryList.stream()
                 .map(this::industryResponseFromRecord)
                 .collect(Collectors.toList());
     }

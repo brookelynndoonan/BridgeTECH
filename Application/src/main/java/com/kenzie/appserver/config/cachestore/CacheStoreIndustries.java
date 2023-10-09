@@ -1,15 +1,16 @@
-package com.kenzie.appserver.config;
+package com.kenzie.appserver.config.cachestore;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.kenzie.appserver.service.model.Career;
+
+import com.kenzie.appserver.service.model.Industries;
 
 import java.util.concurrent.TimeUnit;
 
-public class CacheStoreCareer {
-    private final Cache<String, Career> cache;
+public class CacheStoreIndustries {
+    private final Cache<String, Industries> cache;
 
-    public CacheStoreCareer(int expiry, TimeUnit timeUnit) {
+    public CacheStoreIndustries(int expiry, TimeUnit timeUnit) {
 
         this.cache = CacheBuilder.newBuilder()
                 .expireAfterWrite(expiry, timeUnit)
@@ -17,7 +18,7 @@ public class CacheStoreCareer {
                 .build();
     }
 
-    public Career get(String key) {
+    public Industries get(String key) {
 
         return cache.getIfPresent(key);
     }
@@ -28,7 +29,7 @@ public class CacheStoreCareer {
 
     }
 
-    public void add(String key, Career value) {
+    public void add(String key, Industries value) {
 
         cache.put(key, value);
     }

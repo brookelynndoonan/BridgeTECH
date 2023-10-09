@@ -1,4 +1,4 @@
-package com.kenzie.appserver.config;
+package com.kenzie.appserver.config.cachestore;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

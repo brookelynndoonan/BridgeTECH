@@ -9,10 +9,6 @@ import java.util.List;
 
 @EnableScan
 public interface IndustryRepository extends CrudRepository<IndustriesRecord, String> {
-
-
-    List<IndustriesRecord> findByIndustryName(String industryName);
-
-    IndustriesRecord findIndustryByName(String industryName);
+    
 }
 
