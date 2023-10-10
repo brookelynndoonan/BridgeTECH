@@ -101,22 +101,9 @@ public class CareerService {
     }
 
 
-    public void deleteCareer(String id, String userId) {
-        Optional<CareerRecord> career = careerRepository.findById(id);
-
-        if (career.isPresent()) {
-            CareerRecord careerRecord = career.get();
-
-            if (careerRecord.getId().equals(userId)) {
-                careerRepository.deleteById(id);
-                cache.evict(id);
-            } else {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                        "You are not authorized to delete this career");
-            }
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Career not found");
-        }
+    public void deleteCareer(String Id) {
+        careerRepository.deleteById(Id);
+        cache.evict(Id);
     }
 
     public UserAccountInCareerResponse getUsers(String email) {

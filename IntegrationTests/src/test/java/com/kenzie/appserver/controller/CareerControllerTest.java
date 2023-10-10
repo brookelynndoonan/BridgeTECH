@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,18 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @IntegrationTest
 public class CareerControllerTest {
-
-    @Autowired
-    private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private CareerService careerService;
-    @MockBean
-    private CareerRepository careerRepository;
-
-    private static final MockNeat mockNeat = MockNeat.threadLocal();
     private static final ObjectMapper mapper = new ObjectMapper();
 
 
@@ -126,32 +120,18 @@ public class CareerControllerTest {
         careerRequest.setCompanyDescription("Company Description");
         careerRequest.setId(Id);
 
-        // Mock the behavior of careerRepository to return a CareerRecord when findById is called.
-        CareerRecord mockRecord = new CareerRecord();
-        mockRecord.setId(Id);
-        mockRecord.setCareerName("name");
-        mockRecord.setLocation("location");
-        mockRecord.setJobDescription("Job Description");
-        mockRecord.setCompanyDescription("Company Description");
-
-        when(careerRepository.findById(Id)).thenReturn(Optional.of(mockRecord));
+        CareerResponse career = careerService.addNewCareer(careerRequest);
 
         // WHEN
-        mockMvc.perform(get("/Career/{Id}", Id)
+        mockMvc.perform(get("/Career/{Id}", career.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 // THEN
-                .andExpect(jsonPath("$.Id")
-                        .value(is(Id)))
-                .andExpect(jsonPath("$.name")
+                .andExpect(jsonPath("Id")
+                        .value(is(career.getId())))
+                .andExpect(jsonPath("name")
                         .value(is(careerRequest.getName())))
                 .andExpect(status().isOk());
     }
-
-
-
-
-
-
 
     @Test
     public void searchCareerById_CareerNotFound() throws Exception {
@@ -164,6 +144,26 @@ public class CareerControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    public void deleteCareer_DeleteSuccessful() throws Exception {
+        // GIVEN
+        String Id = UUID.randomUUID().toString();
+
+        CareerCreateRequest careerRequest = new CareerCreateRequest();
+        careerRequest.setName("name");
+        careerRequest.setLocation("location");
+        careerRequest.setJobDescription("Job Description");
+        careerRequest.setCompanyDescription("Company Description");
+        careerRequest.setId(Id);
+
+        CareerResponse career = careerService.addNewCareer(careerRequest);
+
+        // WHEN
+        mockMvc.perform(delete("/Career/{Id}", career.getId())
+                        .accept(MediaType.APPLICATION_JSON))
+                // THEN
+                .andExpect(status().isNoContent());
+    }
 
     @Test
     public void getUserAccounts_isValid_byEmail() throws Exception {
@@ -181,7 +181,7 @@ public class CareerControllerTest {
         careerService.createUser(request);
 
         // WHEN
-        mockMvc.perform(get("/Career/userAccounts/user/{Id}", email)
+        mockMvc.perform(get("/Career/userAccounts/user/{email}", email)
                         .accept(MediaType.APPLICATION_JSON))
                 // THEN
                 .andExpect(jsonPath("password")

@@ -87,15 +87,14 @@ public class CareerController {
     }
 
     @DeleteMapping("/{Id}")
-    public ResponseEntity deleteCustomerById(@PathVariable("Id") String careerId,
-                                             @RequestParam("userId") String userId) {
-        careerService.deleteCareer(careerId, userId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity deleteCustomerById(@PathVariable("Id") String careerId) {
+        careerService.deleteCareer(careerId);
+        return ResponseEntity.noContent().build();
     }
 
     // Blake Helped me write this method.
-    @GetMapping("/userAccounts/user/{Id}")
-    public ResponseEntity<UserAccountInCareerResponse> getUserAccounts(@PathVariable("Id") String Id) {
+    @GetMapping("/userAccounts/user/{email}")
+    public ResponseEntity<UserAccountInCareerResponse> getUserAccounts(@PathVariable("email") String Id) {
         UserAccountInCareerResponse userAccountInCareerResponse = careerService.getUsers(Id);
 
         if (userAccountInCareerResponse == null) {
