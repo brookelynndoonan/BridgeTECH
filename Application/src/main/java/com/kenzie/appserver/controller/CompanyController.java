@@ -36,9 +36,9 @@ public class CompanyController {
 
     @PutMapping
     public ResponseEntity<CompanyResponse> updateCompany(@RequestBody CompanyRequest companyRequest) {
-        Companies companies = new Companies(companyRequest.getCompanyId(),
+        Companies companies = new Companies(companyRequest.getCompanyName(),
                 companyRequest.getCompanyDescription(),
-                companyRequest.getCompanyName());
+                companyRequest.getCompanyId());
         companiesService.updateCompany(companies);
 
         CompanyResponse companyResponse = createCompanyResponse(companies);
@@ -82,7 +82,7 @@ public class CompanyController {
     @DeleteMapping("/{Id}")
     public ResponseEntity deleteCompanyById(@PathVariable("Id") String companyId) {
         companiesService.deleteCompany(companyId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     private CompanyResponse createCompanyResponse(Companies company) {

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,6 @@ import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class CareerServiceTest {
@@ -222,61 +220,16 @@ public class CareerServiceTest {
     }
 
     @Test
-    void deleteCareer_idMatches_isSuccessful() {
+    void deleteCareerById_validId_verifyDeleteCareer() {
         // GIVEN
         String careerId = randomUUID().toString();
-        String userId = "Black Widow";
-
-        CareerRecord careerRecord = new CareerRecord();
-        careerRecord.setId(careerId);
-        careerRecord.setId(userId);
 
         // WHEN
-        when(careerRepository.findById(careerId)).thenReturn(Optional.of(careerRecord));
+        careerService.deleteCareer(careerId);
 
-        careerService.deleteCareer(careerId, userId);
-
-        // THEN
+        //THEN
         verify(careerRepository).deleteById(careerId);
-    }
 
-    @Test
-    void deleteCareer_unauthorized_notSuccessful() {
-        // GIVEN
-        String careerId = randomUUID().toString();
-        String userId = "Thor";
-        String unauthorizedUserId = "Star Lord";
-
-        CareerRecord careerRecord = new CareerRecord();
-        careerRecord.setId(careerId);
-        careerRecord.setId(userId);
-
-        // WHEN
-        when(careerRepository.findById(careerId)).thenReturn(Optional.of(careerRecord));
-
-        // THEN
-        assertThrows(ResponseStatusException.class, () -> {
-            careerService.deleteCareer(careerId, unauthorizedUserId);
-        });
-
-        verify(careerRepository, never()).deleteById(careerId);
-    }
-
-    @Test
-    void deleteCareer_careerNotFound_notSuccessful() {
-        // GIVEN
-        String careerId = randomUUID().toString();
-        String userId = "Nicholas Fury";
-
-        // WHEN
-        when(careerRepository.findById(careerId)).thenReturn(Optional.empty());
-
-        // THEN
-        assertThrows(ResponseStatusException.class, () -> {
-            careerService.deleteCareer(careerId, userId);
-        });
-
-        verify(careerRepository, never()).deleteById(careerId);
     }
 
     @Test

@@ -60,9 +60,9 @@ public class CareerController {
 
     @GetMapping
     public ResponseEntity<List<CareerResponse>> getAllCareers() {
-        List<Career> career  = careerService.findAllCareers();
+        List<Career> career = careerService.findAllCareers();
 
-        if (career == null ||  career.isEmpty()) {
+        if (career == null || career.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 

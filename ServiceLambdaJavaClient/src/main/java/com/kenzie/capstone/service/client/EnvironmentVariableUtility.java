@@ -24,7 +24,7 @@ public class EnvironmentVariableUtility {
      * Gratefully adapted from Tim Lewis's answer on
      * https://stackoverflow.com/questions/2263929/regarding-application-properties-file-and-environment-variable
      */
-    private static String resolveEnvVars(Map<String,String> envVars, String input, boolean failSilently) {
+    private static String resolveEnvVars(Map<String, String> envVars, String input, boolean failSilently) {
         if (null == input) {
             return null;
         }
@@ -36,10 +36,10 @@ public class EnvironmentVariableUtility {
             String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
             String envVarValue = envVars.get(envVarName);
 
-            if(failSilently) {
+            if (failSilently) {
                 //how the shell works natively
                 m.appendReplacement(sb, null == envVarValue ? "" : envVarValue);
-            }else {
+            } else {
                 //making it throw errors, so we know when one is not found
                 if (envVarValue == null) {
                     throw new RuntimeException("Environment variable " + envVarName +
@@ -56,10 +56,10 @@ public class EnvironmentVariableUtility {
      * Reads a line expecting an environment variable and resolves it if found.
      * If no environment variable is found, the line is skipped
      */
-    private static Map<String,String> computeEnvVar(Map<String,String> envVars, String line, boolean failSilently){
+    private static Map<String, String> computeEnvVar(Map<String, String> envVars, String line, boolean failSilently) {
         String[] parts = line.trim().split("\\s+");
 
-        Map<String,String> newVars = new HashMap<>(envVars);
+        Map<String, String> newVars = new HashMap<>(envVars);
 
         if (parts.length > 1) {
             String[] var = parts[1].split("=");
@@ -79,29 +79,25 @@ public class EnvironmentVariableUtility {
 
     /**
      * Parses the given file for environment variables to return for use and returns a
-     *  copy of the map of environment variables with the ones found in the file added.
+     * copy of the map of environment variables with the ones found in the file added.
      * Uses the envVars map as pre-existing variables to resolve parsing along with
-     *  any variables in the file in found order.
+     * any variables in the file in found order.
      *
      * @param pathFromProjectRoot the list of the directories that form the relative path from
      *                            the execution location to the directory where the file to
      *                            parse is found
-     *
-     * @param filename the name of the file to parse for environment variables
-     *
-     * @param envVars the current environment variable map to be considered when constructing
-     *                new environment variables in the file to parse
-     *
-     * @param failSilently if true, when parsing will replace any unfound variable references
-     *                     with the empty string (as most terminals do). If false, will throw
-     *                     a RuntimeException when a variable reference is not found.
-     *
+     * @param filename            the name of the file to parse for environment variables
+     * @param envVars             the current environment variable map to be considered when constructing
+     *                            new environment variables in the file to parse
+     * @param failSilently        if true, when parsing will replace any unfound variable references
+     *                            with the empty string (as most terminals do). If false, will throw
+     *                            a RuntimeException when a variable reference is not found.
      * @throws IllegalArgumentException if the given file is not found.
      */
-    public static Map<String,String> getEnvVariablesFromFile(List<String> pathFromProjectRoot,
-                                                             String filename,
-                                                             Map<String, String> envVars,
-                                                             boolean failSilently){
+    public static Map<String, String> getEnvVariablesFromFile(List<String> pathFromProjectRoot,
+                                                              String filename,
+                                                              Map<String, String> envVars,
+                                                              boolean failSilently) {
 
         Path rootDir = Paths.get(".").normalize().toAbsolutePath().getParent();
 
@@ -114,7 +110,7 @@ public class EnvironmentVariableUtility {
 
         BufferedReader reader;
 
-        Map<String,String> newEnvVars = new HashMap<>(envVars);
+        Map<String, String> newEnvVars = new HashMap<>(envVars);
 
         try {
             reader = new BufferedReader(new FileReader(path.toFile()));
@@ -146,16 +142,12 @@ public class EnvironmentVariableUtility {
      * Uses the envVars map as pre-existing variables to resolve parsing
      * along with any variables in the file in found order.
      *
-     * @param pathToFile the list of the directories that form the path from the execution
-     *                   location to the directory where the file to parse is found
-     *
-     * @param filename the name of the file to parse for environment variables
-     *
-     * @param envVars the current environment variable map to be considered when constructing
-     *                new environment variables in the file to parse
-     *
-     * @param envVarName name of the environment variable to find
-     *
+     * @param pathToFile   the list of the directories that form the path from the execution
+     *                     location to the directory where the file to parse is found
+     * @param filename     the name of the file to parse for environment variables
+     * @param envVars      the current environment variable map to be considered when constructing
+     *                     new environment variables in the file to parse
+     * @param envVarName   name of the environment variable to find
      * @param failSilently if true, when parsing will replace any unfound variable references
      *                     with the empty string (as most terminals do). If false, will throw
      *                     a RuntimeException when a variable reference is not found.
@@ -164,7 +156,7 @@ public class EnvironmentVariableUtility {
                                                 String filename,
                                                 Map<String, String> envVars,
                                                 String envVarName,
-                                                boolean failSilently){
+                                                boolean failSilently) {
 
         Map<String, String> newEnvVars = getEnvVariablesFromFile(pathToFile, filename, envVars, failSilently);
 
@@ -178,12 +170,12 @@ public class EnvironmentVariableUtility {
      *
      * @param envVarName the name of the environment variable to locate
      */
-    public static String getEnvVarFromSetupEnvironment(String envVarName){
-        Map<String,String> envVars = System.getenv();
+    public static String getEnvVarFromSetupEnvironment(String envVarName) {
+        Map<String, String> envVars = System.getenv();
         List<String> pathToFile = new ArrayList<>();
         String filename = "setupEnvironment.sh";
 
-        return getEnvVariableFromFile(pathToFile,filename,envVars,envVarName,false);
+        return getEnvVariableFromFile(pathToFile, filename, envVars, envVarName, false);
     }
 
 }
