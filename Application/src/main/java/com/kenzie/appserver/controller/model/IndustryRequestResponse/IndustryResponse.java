@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IndustryResponse {
-    @JsonProperty("Industry Name")
+    @JsonProperty("IndustryName")
     private String industryName;
     @JsonProperty("Description")
     private String industryDescription;

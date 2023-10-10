@@ -36,9 +36,9 @@ public class IndustryController {
 
     @PutMapping
     public ResponseEntity<IndustryResponse> updateIndustry(@RequestBody IndustryRequest industryRequest) {
-        Industries industries = new Industries(industryRequest.getIndustryId(),
+        Industries industries = new Industries(industryRequest.getIndustryName(),
                 industryRequest.getIndustryDescription(),
-                industryRequest.getIndustryName());
+                industryRequest.getIndustryId());
         industriesService.updateIndustry(industries);
 
         IndustryResponse industryResponse = createIndustryResponse(industries);
@@ -82,7 +82,7 @@ public class IndustryController {
     @DeleteMapping("/{Id}")
     public ResponseEntity deleteIndustryById(@PathVariable("Id") String industryId) {
         industriesService.deleteIndustry(industryId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     private IndustryResponse createIndustryResponse(Industries industries) {
