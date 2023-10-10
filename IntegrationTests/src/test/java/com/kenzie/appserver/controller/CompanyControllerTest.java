@@ -28,6 +28,14 @@ public class CompanyControllerTest {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    private void cleanUpCompany(String companyId) {
+        try {
+            companyService.deleteCompany(companyId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public void addNewCompany_isValid_newCompanyAdded() throws Exception {
 
@@ -47,6 +55,7 @@ public class CompanyControllerTest {
                         .value(request.getCompanyName()))
                 .andExpect(jsonPath("description")
                         .value(request.getCompanyDescription()));
+        cleanUpCompany(Id);
     }
 
     @Test
@@ -82,6 +91,7 @@ public class CompanyControllerTest {
                 .andExpect(jsonPath("description")
                         .value("Company Description"))
                 .andExpect(status().is2xxSuccessful());
+        cleanUpCompany(Id);
     }
 
     @Test
@@ -104,6 +114,7 @@ public class CompanyControllerTest {
                 .andExpect(jsonPath("companyName")
                         .value(is(company.getCompanyName())))
                 .andExpect(status().isOk());
+        cleanUpCompany(Id);
     }
 
     @Test
