@@ -72,10 +72,13 @@ export default class ExampleClient extends BaseClass {
 
     }
 
-    async createCareer(name, errorCallback) {
+    async createCareer(name,location,jobdescription,companydescription,errorCallback) {
         try {
             const response = await this.client.post(`/Career/`, {
-                name: name
+                "name": name,
+                "location": location,
+                "jobDescription":jobdescription,
+                "companyDescription":companydescription
             });
             return response.data;
         } catch (error) {
@@ -95,7 +98,7 @@ export default class ExampleClient extends BaseClass {
 
     async getUserAccount(email, password, errorCallback) {
         try {
-            const response = await this.client.get(`/Career/user/${userId}`, {
+            const response = await this.client.get(`/Career/userAccounts/user/${email}`, {
                 "email": email,
                 "password": password
             });
@@ -107,7 +110,7 @@ export default class ExampleClient extends BaseClass {
 
     async createUserAccount(name, lastName, email, password, accountType, errorCallback) {
         try {
-            const response = await this.client.post(`/Career/user`, {
+            const response = await this.client.post(`/Career/userAccounts/user`, {
                 "name": name,
                 "lastName": lastName,
                 "email": email,

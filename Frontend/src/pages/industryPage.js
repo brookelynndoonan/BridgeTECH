@@ -38,7 +38,7 @@ class IndustryPage extends BaseClass {
                 )
                         .join("");
         } else {
-            resultArea.innerHTML = "No careers at this moment. Check back Later!"
+            resultArea.innerHTML = "No industries at this moment. Check back Later!"
         }
     }
 }

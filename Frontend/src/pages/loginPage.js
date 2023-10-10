@@ -28,6 +28,7 @@ class LoginPage extends BaseClass {
 
         if (result){
             this.showMessage(`Got ${result.name}!`)
+            window.location.href='dashBoard.html'
         } else {
             this.errorHandler("Error doing GET! Try again...");
         }

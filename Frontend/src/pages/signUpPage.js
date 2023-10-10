@@ -33,6 +33,7 @@ class SignUpPage extends BaseClass {
 
         if (createdUser) {
             this.showMessage(`Created ${createdUser.name}!`)
+            window.location.href='dashBoard.html'
         } else {
             this.errorHandler("Error creating!  Try again...")
         }
