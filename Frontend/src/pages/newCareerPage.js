@@ -20,11 +20,12 @@ class NewCareerPage extends BaseClass {
         event.preventDefault();
          this.dataStore.set("Career", null);
         let companyName = document.getElementById('company').value;
+        let companyLocation = document.getElementById('job-location')
         let jobTitle = document.getElementById("job-title").value;
         let jobDescription = document.getElementById('job-description').value;
         let jobType = document.getElementById('job-type').value;
 
-        const createdCareerPost = await this.client.createCareer(companyName, jobTitle, jobDescription, jobType);
+        const createdCareerPost = await this.client.createCareer(companyName,companyLocation, jobTitle, jobDescription, jobType);
         this.dataStore.set("Career", createdCareerPost);
 
         if(createdCareerPost){

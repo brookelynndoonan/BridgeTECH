@@ -93,9 +93,12 @@ export default class ExampleClient extends BaseClass {
         }
     }
 
-    async getUserAccount(userId, errorCallback) {
+    async getUserAccount(email, password, errorCallback) {
         try {
-            const response = await this.client.get(`/Career/user/ ${userId}`)
+            const response = await this.client.get(`/Career/user/${userId}`, {
+                "email": email,
+                "password": password
+            });
             return response.data;
         } catch (error) {
             this.handleError("getUserAccount", error, errorCallback);
