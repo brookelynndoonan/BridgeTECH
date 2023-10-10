@@ -28,6 +28,15 @@ public class IndustryControllerTest {
     private IndustriesService industriesService;
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    private void cleanUpIndustry(String industryId) {
+        try {
+            industriesService.deleteIndustry(industryId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     @Test
     public void addNewIndustry_isValid_newIndustryAdded() throws Exception {
@@ -46,6 +55,7 @@ public class IndustryControllerTest {
                 .andExpect(jsonPath("Id").exists())
                 .andExpect(jsonPath("IndustryName").value(request.getIndustryName()))
                 .andExpect(jsonPath("Description").value(request.getIndustryDescription()));
+        cleanUpIndustry(request.getIndustryId());
     }
 
     @Test
@@ -81,6 +91,7 @@ public class IndustryControllerTest {
                 .andExpect(jsonPath("Description")
                         .value("AI makes your music now..."))
                 .andExpect(status().is2xxSuccessful());
+        cleanUpIndustry(Id);
     }
 
     @Test
@@ -103,6 +114,7 @@ public class IndustryControllerTest {
                 .andExpect(jsonPath("IndustryName")
                         .value(is(industryRequest.getIndustryName())))
                 .andExpect(status().isOk());
+        cleanUpIndustry(Id);
     }
 
     @Test
