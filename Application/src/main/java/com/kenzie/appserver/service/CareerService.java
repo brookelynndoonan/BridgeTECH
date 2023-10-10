@@ -80,9 +80,11 @@ public class CareerService {
     public CareerResponse addNewCareer(CareerCreateRequest careerCreateRequest) {
 
         CareerRecord careerRecord = createCareerRecordFromRequest(careerCreateRequest);
-
+    try {
         careerRepository.save(careerRecord);
-
+    }catch (Exception e){
+        System.out.println(e.getMessage());
+    }
         return createCareerResponseFromRecord(careerRecord);
     }
 

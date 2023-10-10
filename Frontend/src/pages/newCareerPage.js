@@ -19,25 +19,26 @@ class NewCareerPage extends BaseClass {
         //     let careerId = this.dataStore.get('Id')
         event.preventDefault();
          this.dataStore.set("Career", null);
-        let companyName = document.getElementById('company').value;
-        let companyLocation = document.getElementById('job-location')
-        let jobTitle = document.getElementById("job-title").value;
-        let jobDescription = document.getElementById('job-description').value;
-        let jobType = document.getElementById('job-type').value;
+        let companydescription = document.getElementById('company').value;
+        let location = document.getElementById('job-location').value;
+        let name = document.getElementById("job-title").value;
+        let jobdescription = document.getElementById('job-description').value;
+        // let jobType = document.getElementById('job-type').value;
 
-        const createdCareerPost = await this.client.createCareer(companyName,companyLocation, jobTitle, jobDescription, jobType);
+        const createdCareerPost = await this.client.createCareer(name,location, companydescription, jobdescription);
         this.dataStore.set("Career", createdCareerPost);
 
         if(createdCareerPost){
             this.showMessage(`Created ${createdCareerPost.name}!`)
+            window.location.href='careerPage.html'
         }else {
             this.errorHandler("Error creating!  Try again...")
         }
      }
 }
 const main = async () => {
-    const newCarerPage = new NewCareerPage();
-    newCarerPage.mount();
+    const newCareerPage = new NewCareerPage();
+    newCareerPage.mount();
 };
 
 window.addEventListener('DOMContentLoaded',main);
