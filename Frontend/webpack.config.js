@@ -11,6 +11,7 @@ module.exports = {
     loginPage: path.resolve(__dirname, 'src', 'pages', 'loginPage.js'),
     signUpPage: path.resolve(__dirname, 'src', 'pages', 'signUpPage.js'),
     careerPage: path.resolve(__dirname, 'src', 'pages', 'careerPage.js'),
+    newCareerPage: path.resolve(__dirname, 'src', 'pages', 'newCareerPage.js'),
     dashboardPage: path.resolve(__dirname, 'src','pages','dashboardPage.js'),
     industryPage: path.resolve(__dirname, 'src', 'pages', 'industryPage.js'),
 
@@ -58,6 +59,10 @@ module.exports = {
     }),new HtmlWebpackPlugin({
       template: './src/industryPage.html',
       filename: 'industryPage.html',
+      inject: false
+    }),new HtmlWebpackPlugin({
+      template: './src/newCareerPage.html',
+      filename: 'newCareerPage.html',
       inject: false
     }),
     new CopyPlugin({
