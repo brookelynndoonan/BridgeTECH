@@ -2,33 +2,21 @@ package com.kenzie.appserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kenzie.appserver.IntegrationTest;
-import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
-import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryRequest;
 import com.kenzie.appserver.controller.model.IndustryRequestResponse.IndustryResponse;
-import com.kenzie.appserver.repositories.IndustryRepository;
-import com.kenzie.appserver.repositories.model.IndustriesRecord;
 import com.kenzie.appserver.service.IndustriesService;
-import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
-import static org.apache.commons.lang3.Functions.get;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
 public class IndustryControllerTest {
@@ -50,13 +38,12 @@ public class IndustryControllerTest {
         request.setIndustryName("Industry Name");
         request.setIndustryDescription("Industry Description");
 
-        // Perform the POST request
         mockMvc.perform(post("/Industry")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())  // Expect HTTP 201 Created status
-                .andExpect(jsonPath("Id").exists())  // Check that Id exists but don't check its value
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("Id").exists())
                 .andExpect(jsonPath("IndustryName").value(request.getIndustryName()))
                 .andExpect(jsonPath("Description").value(request.getIndustryDescription()));
     }
