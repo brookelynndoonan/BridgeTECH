@@ -20,18 +20,6 @@ class CareerPage extends BaseClass {
         await this.renderCareer();
     }
 
-    // async onCreate(event) {
-    //     //create a job Post
-    //     event.preventDefault();
-    //     this.dataStore.set("Career", null);
-    //
-    //     let careerId = this.dataStore.get('Id')
-    //     let jobNameTitle = document.getElementById("job-name-title").value;
-    //     let jobName = document.c
-    //
-    //
-    // }
-
     async renderCareer() {
         let resultArea = document.getElementById('job-posting-container');
         const careers = await this.client.getAllCareers(); // Use getAllCareers without filters
