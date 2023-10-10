@@ -28,6 +28,13 @@ public class CareerControllerTest {
     private CareerService careerService;
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    private void cleanUpCareer(String careerId) {
+        try {
+            careerService.deleteCareer(careerId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void addNewCareer_isValid_newCareerAdded() throws Exception {
@@ -55,7 +62,7 @@ public class CareerControllerTest {
                 .andExpect(jsonPath("location")
                         .value(request.getLocation()));
 
-        careerService.deleteCareer(Id);
+        cleanUpCareer(Id);
     }
 
     @Test
@@ -102,7 +109,7 @@ public class CareerControllerTest {
                         .value("Drink up."))
                 .andExpect(status().is2xxSuccessful());
 
-        careerService.deleteCareer(Id);
+        cleanUpCareer(Id);
     }
 
     @Test
@@ -128,7 +135,7 @@ public class CareerControllerTest {
                         .value(is(careerRequest.getName())))
                 .andExpect(status().isOk());
 
-        careerService.deleteCareer(Id);
+        cleanUpCareer(Id);
     }
 
     @Test
