@@ -16,17 +16,6 @@ import javax.inject.Singleton;
 )
 public class ServiceModule {
 
-    /*  @Singleton
-    @Provides
-    @Inject
-    public LambdaService provideLambdaService(@Named("ExampleDao") ExampleDao exampleDao) {
-        return new LambdaService(exampleDao);
-    }
-
-   */
-
-    // (UserAccounts Lambda. Added table and stack to aws. Update the lambda files for user account usage.
-    // Still need to test. still need to implemnt within our application service after testing is finish.)
 
     @Singleton
     @Provides

@@ -10,8 +10,8 @@ public class UserAccounts {
     private String password;
     private String email;
 
-    public UserAccounts (String Id, String name, String accountType, String password
-            , String email){
+    public UserAccounts(String Id, String name, String accountType, String password
+            , String email) {
         this.Id = Id;
         this.name = name;
         this.accountType = accountType;

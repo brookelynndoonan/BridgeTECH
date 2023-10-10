@@ -5,26 +5,18 @@ import com.kenzie.appserver.IntegrationTest;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateRequest;
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
-import com.kenzie.appserver.repositories.CareerRepository;
-import com.kenzie.appserver.repositories.model.CareerRecord;
 import com.kenzie.appserver.service.CareerService;
-import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @IntegrationTest
@@ -62,6 +54,8 @@ public class CareerControllerTest {
                         .value(request.getCompanyDescription()))
                 .andExpect(jsonPath("location")
                         .value(request.getLocation()));
+
+        careerService.deleteCareer(Id);
     }
 
     @Test
@@ -96,17 +90,19 @@ public class CareerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(updatedCareerRequest)))
                 // THEN
-                .andExpect(jsonPath("$.Id")
+                .andExpect(jsonPath("Id")
                         .exists())
-                .andExpect(jsonPath("$.name")
+                .andExpect(jsonPath("name")
                         .value(updatedName))
-                .andExpect(jsonPath("$.location")
+                .andExpect(jsonPath("location")
                         .value("Glacier"))
-                .andExpect(jsonPath("$.jobDescription")
+                .andExpect(jsonPath("jobDescription")
                         .value("We collect water now."))
-                .andExpect(jsonPath("$.companyDescription")
+                .andExpect(jsonPath("companyDescription")
                         .value("Drink up."))
                 .andExpect(status().is2xxSuccessful());
+
+        careerService.deleteCareer(Id);
     }
 
     @Test
@@ -131,6 +127,8 @@ public class CareerControllerTest {
                 .andExpect(jsonPath("name")
                         .value(is(careerRequest.getName())))
                 .andExpect(status().isOk());
+
+        careerService.deleteCareer(Id);
     }
 
     @Test

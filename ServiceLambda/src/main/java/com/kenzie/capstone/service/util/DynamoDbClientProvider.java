@@ -12,6 +12,7 @@ public class DynamoDbClientProvider {
 
     /**
      * Returns DynamoDB client using default region.
+     *
      * @return AmazonDynamoDB
      */
     public static AmazonDynamoDB getDynamoDBClient() {
@@ -20,6 +21,7 @@ public class DynamoDbClientProvider {
 
     /**
      * Returns DynamoDB client using default region.
+     *
      * @param region If present, will be used as the region for the DynamoDB client
      * @return AmazonDynamoDB
      */

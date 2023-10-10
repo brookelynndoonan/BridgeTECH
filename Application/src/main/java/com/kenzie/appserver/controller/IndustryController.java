@@ -36,9 +36,9 @@ public class IndustryController {
 
     @PutMapping
     public ResponseEntity<IndustryResponse> updateIndustry(@RequestBody IndustryRequest industryRequest) {
-        Industries industries = new Industries(industryRequest.getIndustryId(),
+        Industries industries = new Industries(industryRequest.getIndustryName(),
                 industryRequest.getIndustryDescription(),
-                industryRequest.getIndustryName());
+                industryRequest.getIndustryId());
         industriesService.updateIndustry(industries);
 
         IndustryResponse industryResponse = createIndustryResponse(industries);

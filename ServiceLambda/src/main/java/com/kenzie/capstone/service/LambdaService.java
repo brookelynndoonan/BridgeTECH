@@ -31,7 +31,7 @@ public class LambdaService {
     }
 
     public UserAccounts setUserAccounts(String name, String accountType, String password,
-    String email) {
+                                        String email) {
         String id = UUID.randomUUID().toString();
         userAccountsDao.setUserAccounts(id, name, accountType, password, email);
         return new UserAccounts(id, name, accountType, password, email);

@@ -5,17 +5,13 @@ import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerCreateR
 import com.kenzie.appserver.controller.model.CareerRequestResponse.CareerResponse;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerRequest;
 import com.kenzie.appserver.controller.model.UserAccountInCareerRequestResponse.UserAccountInCareerResponse;
+import com.kenzie.appserver.repositories.CareerRepository;
 import com.kenzie.appserver.repositories.UserAccountRepository;
 import com.kenzie.appserver.repositories.model.CareerRecord;
-import com.kenzie.appserver.repositories.CareerRepository;
-
 import com.kenzie.appserver.service.model.Career;
 import com.kenzie.capstone.service.client.LambdaServiceClient;
 import com.kenzie.capstone.service.model.UserAccountRecord;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +153,7 @@ public class CareerService {
 
         return record;
     }
+
     private CareerResponse createCareerResponseFromRecord(CareerRecord careerRecord) {
 
         CareerResponse response = new CareerResponse();
