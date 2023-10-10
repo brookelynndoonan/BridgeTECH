@@ -45,12 +45,7 @@ class CareerPage extends BaseClass {
         } else {
             resultArea.innerHTML = "No Career information available.";
         }
-        // resultArea.appendChild(careers);
     }
-
-    // onDelete(){
-    //
-    // }
 }
 
 const main = async () => {

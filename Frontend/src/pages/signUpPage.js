@@ -16,7 +16,6 @@ class SignUpPage extends BaseClass {
         this.client = new ExampleClient();
     }
 
-
     async onCreate(event) {
         event.preventDefault();
         this.dataStore.set("user", null);
@@ -26,6 +25,8 @@ class SignUpPage extends BaseClass {
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
         let accountType = document.getElementById("accountType").value;
+
+        console.log("method check!");
 
         const createdUser = await this.client.createUserAccount(name, lastName, email, password, accountType, this.errorHandler);
         this.dataStore.set("user", createdUser);
@@ -37,10 +38,9 @@ class SignUpPage extends BaseClass {
         }
     }
 }
-
 const main = async () => {
     const signUpPage = new SignUpPage();
-    signUpPage.mount();
+    await signUpPage.mount();
 };
 
 window.addEventListener('DOMContentLoaded', main);
